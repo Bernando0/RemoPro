@@ -44,13 +44,16 @@ export default function HomeScreen() {
               <Logo width={130} height={20} />
             </View>
             <View className="flex-row space-x-2">
-            <TouchableOpacity className="p-1">
-              <NoticeIcon width={36} height={36} />
-            </TouchableOpacity>
-            <TouchableOpacity className="p-1">
-              <ProfileIcon width={36} height={36} />
-            </TouchableOpacity>
-
+              <TouchableOpacity className="p-1"
+              onPress={() => navigation.navigate("Notification")}>
+                
+                <NoticeIcon name="notifications-outline" size={36} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="p-1"
+                onPress={() => navigation.navigate("UserProfile")}>
+                <ProfileIcon name="person-circle-outline" size={36} />
+              </TouchableOpacity>
             </View>
 
           </View>
