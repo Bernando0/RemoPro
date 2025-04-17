@@ -59,7 +59,7 @@ export default function ProjectsScreen() {
                 className="w-20 h-20 rounded-md mr-3"
               />
               <View className="flex-1">
-                <Text numberOfLines={3} className="text-xs text-black mb-1">
+                <Text numberOfLines={3} className="text-s text-black mb-1">
                   {project.description}
                 </Text>
                 <Text className="text-[10px] text-gray-500">

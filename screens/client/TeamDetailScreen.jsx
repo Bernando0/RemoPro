@@ -104,14 +104,20 @@ export default function TeamDetailScreen() {
         {/* Card */}
         <View className="px-4 pt-4">
           <View className="flex-row items-center mb-2 space-x-2">
-            <Image source={team.logo} className="w-10 h-10 rounded-md" />
+          <Image source={team.logo} className="w-16 h-16 rounded-md" />
+          <View>
+          <View className="flex-row items-center space-x-2">
             <Text className="font-semibold text-lg flex-shrink">{team.name}</Text>
             <Ionicons name="star" className="ml-2" size={16} color="black" />
             <Text className="text-base">{team.rating}</Text>
-            <Text className="text-s text-gray-400">
+            
+          </View>
+          <Text className="text-s text-gray-400">
               ({team.reviews.length} отзывов)
             </Text>
+            </View>
           </View>
+          
 
           <Text className="text-base text-gray-700 mb-2 leading-5">
             {team.description}
