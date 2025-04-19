@@ -89,12 +89,12 @@ export default function ChatScreen() {
           <View className="absolute left-0 right-0 items-center z-0">
               <Logo width={130} height={20} />
               </View>
-              <View className="flex-row space-x-3">
-                <TouchableOpacity>
-                  <NoticeIcon width={36} height={36} />
+              <View className="flex-row space-x-2">
+                <TouchableOpacity className="p-1">
+                  <NoticeIcon size={36} />
                 </TouchableOpacity>
-                <TouchableOpacity>
-                  <ProfileIcon width={36} height={36} />
+                <TouchableOpacity className="p-1">
+                  <ProfileIcon size={36} />
                 </TouchableOpacity>
               </View>
         </View>

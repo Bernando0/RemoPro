@@ -35,22 +35,23 @@ export default function TeamsScreen() {
             <ArrowIcon name="arrow-back" size={36} />
           </TouchableOpacity>
 
-          <View className="flex-1 mx-2 border border-black h-[36px] rounded-[12px] px-3 py-1 flex-row items-center">
+          <View className="w-[60%] border border-black h-[36px] rounded-[12px] px-3 py-1 flex-row items-center">
             <TextInput
-              className="flex-1 ml-2 text-l"
+              className="flex-1 ml-2 text-base"
               placeholder="Поиск..."
               placeholderTextColor="#000000"
             />
           </View>
 
-          <View className="flex-row space-x-3">
-          <TouchableOpacity>
-            <NoticeIcon width={36} height={36} />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <ProfileIcon width={36} height={36} />
-          </TouchableOpacity>
-        </View>
+
+          <View className="flex-row space-x-2">
+            <TouchableOpacity className="p-1">
+              <NoticeIcon size={36} />
+            </TouchableOpacity>
+            <TouchableOpacity className="p-1">
+              <ProfileIcon size={36} />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
       <View className="mb-4 mt-2" >
