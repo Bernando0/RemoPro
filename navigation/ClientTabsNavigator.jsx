@@ -6,6 +6,10 @@ import HomeScreen from '../screens/client/HomeScreen';
 import ProjectsScreen from '../screens/client/ProjectsScreen';
 import TeamsScreen from '../screens/client/TeamsScreen';
 import ChatScreen from '../screens/client/ChatScreen';
+import IconChat from '../assets/Profile.svg'
+import IconTeam from '../assets/Inbox.svg'
+import IconProjects from '../assets/Feed.svg'
+import IconHome from '../assets/Home.svg'
 import { Ionicons, FontAwesome5, Feather } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
@@ -26,16 +30,16 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   
             switch (route.name) {
               case 'Home':
-                icon = <Ionicons name="home-outline" size={22} color={color} />;
+                icon = <IconHome name="home-outline" size={20} color={color} />;
                 break;
               case 'Projects':
-                icon = <FontAwesome5 name="layer-group" size={20} color={color} />;
+                icon = <IconProjects name="layer-group" size={20} color={color} />;
                 break;
               case 'Teams':
-                icon = <FontAwesome5 name="users" size={20} color={color} />;
+                icon = <IconTeam name="users" size={20} color={color} />;
                 break;
               case 'Chat':
-                icon = <Feather name="message-square" size={22} color={color} />;
+                icon = <IconChat name="message-square" size={20} color={color} />;
                 break;
             }
   
@@ -88,21 +92,25 @@ const styles = StyleSheet.create({
       borderRadius: 12,
       paddingHorizontal: 4,
       paddingVertical: 4,
-      borderWidth: 1, // 👈 граница
-    borderColor: '#ececec',
-      gap:10,
+      borderWidth: 1,
+      borderColor: '#ececec',
+      gap: 6,
       shadowOffset: { width: 0, height: 4 },
       shadowRadius: 10,
       elevation: 10,
+      
     },
     tabItem: {
-      padding: 14,
+      padding: 5,
       borderRadius: 8,
-    //   marginHorizontal:15,
       backgroundColor: '#fff',
     },
+    
     activeTab: {
-      backgroundColor: '#000',
+      backgroundColor: '#fff',
+      borderWidth: 2,
+      borderColor: '#000',
     },
+    
   });
   

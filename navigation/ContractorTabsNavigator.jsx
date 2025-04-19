@@ -8,6 +8,10 @@ import ContractorHomeScreen from '../screens/contractor/HomeScreen';
 import ContractorProjectsScreen from '../screens/contractor/ProjectsScreen';
 import ContractorOrdersScreen from '../screens/contractor/OrdersScreen';
 import ContractorChatScreen from '../screens/contractor/ChatScreen';
+import IconChat from '../assets/Profile.svg'
+import IconOrders from '../assets/Orders.svg'
+import IconProjects from '../assets/Feed.svg'
+import IconHome from '../assets/Home.svg'
 
 const Tab = createBottomTabNavigator();
 
@@ -26,16 +30,16 @@ const CustomTabBar = ({ state, navigation }) => {
 
           switch (route.name) {
             case 'Home':
-              icon = <Ionicons name="home-outline" size={22} color={color} />;
+              icon = <IconHome name="home-outline" size={22} color={color} />;
               break;
             case 'Projects':
-              icon = <FontAwesome5 name="layer-group" size={20} color={color} />;
+              icon = <IconProjects name="layer-group" size={20} color={color} />;
               break;
             case 'Orders':
-              icon = <Ionicons name="clipboard-outline" size={22} color={color} />;
+              icon = <IconOrders name="clipboard-outline" size={22} color={color} />;
               break;
             case 'Chat':
-              icon = <Feather name="message-square" size={22} color={color} />;
+              icon = <IconChat name="message-square" size={22} color={color} />;
               break;
           }
 
@@ -87,17 +91,22 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderWidth: 1,
     borderColor: '#ececec',
-    gap: 10,
+    gap: 6,
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 10,
     elevation: 10,
+    
   },
   tabItem: {
-    padding: 14,
+    padding: 5,
     borderRadius: 8,
     backgroundColor: '#fff',
   },
+  
   activeTab: {
-    backgroundColor: '#000',
+    backgroundColor: '#fff',
+    borderWidth: 2,
+    borderColor: '#000',
   },
+  
 });
