@@ -45,7 +45,7 @@ export default function HomeScreen() {
             </View>
             <View className="flex-row space-x-2">
               <TouchableOpacity className="p-1"
-              onPress={() => navigation.navigate("Notification")}>
+              onPress={() => navigation.navigate("ClientNotification")}>
                 
                 <NoticeIcon name="notifications-outline" size={36} />
               </TouchableOpacity>
@@ -89,7 +89,7 @@ export default function HomeScreen() {
               </View>
             ))}
             <TouchableOpacity className="w-24 h-24 border border-dashed border-black rounded-md justify-center items-center">
-              <Text className="text-xs text-black">Создать{"\n"}проект</Text>
+              <Text className="text-xs text-center text-black">Создать{"\n"}проект</Text>
             </TouchableOpacity>
           </ScrollView>
         </Animated.View>
