@@ -10,6 +10,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { useAuthStore } from "../../store/authStore";
 import { BACKEND_URL } from "../../utils/config";
+import Logo from "../../assets/logo.svg";
 
 
 export default function LoginScreen() {
@@ -33,7 +34,7 @@ export default function LoginScreen() {
       const data = await response.json();
       setAuth({ role: data.role, username: data.username, token: data.token });
 
-      if (data.role === "ROLE_CLIENT") {
+      if (data.role === "ROLE_USER") {
         navigation.replace("Client");
       } else if (data.role === "ROLE_CONTRACTOR") {
         navigation.replace("Contractor");
@@ -47,11 +48,13 @@ export default function LoginScreen() {
 
   return (
     <View className="flex-1 bg-white justify-center items-center px-6">
-      <Image source={require("../../assets/logo.png")} className="w-32 h-8 mb-8" resizeMode="contain" />
+       <View className="items-center pb-[60px] z-0">
+                    <Logo width={160} height={30} />
+                  </View>
       <Text className="text-xl font-semibold mb-6">Войти в RemoPro</Text>
 
       <TextInput
-        placeholder="Имя пользователя или Email"
+        placeholder="Введите Email"
         value={username}
         onChangeText={setUsername}
         className="border border-gray-300 w-full p-3 rounded-lg mb-3"
@@ -59,7 +62,7 @@ export default function LoginScreen() {
       />
 
       <TextInput
-        placeholder="Пароль"
+        placeholder="Введите Пароль"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -80,12 +83,14 @@ export default function LoginScreen() {
         <Text className="text-white font-semibold">Continue with Google</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity className="border border-black py-3 rounded-xl w-full items-center">
+      <TouchableOpacity className="border border-black py-3 mb-[100px] rounded-xl w-full items-center">
         <Text className="text-black font-semibold">Continue with Apple</Text>
       </TouchableOpacity>
 
       <Text className="text-gray-300 mt-6">Нет аккаунта RemoPro?</Text>
-      <TouchableOpacity className="mt-2 border border-black py-2 px-6 rounded-xl">
+      <TouchableOpacity className="mt-2 border border-black py-2 px-6 rounded-xl"
+      onPress={() => navigation.navigate("RegisterRole")}
+      >
         <Text className="text-black font-semibold">Зарегистрироваться</Text>
       </TouchableOpacity>
     </View>

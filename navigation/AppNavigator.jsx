@@ -3,7 +3,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAuthStore } from "../store/authStore";
 
 import LoginScreen from "../screens/common/LoginScreen";
-import RegisterScreen from "../screens/common/RegisterScreen";
+import RegisterClientScreen from "../screens/common/RegisterClientScreen";
+import RegisterContractorScreen from "../screens/common/RegisterContractorScreen";
+import RegisterRoleScreen from "../screens/common/RegisterRoleScreen";
 import ClientNavigator from "./ClientTabsNavigator";
 import ContractorNavigator from "./ContractorTabsNavigator";
 
@@ -24,7 +26,9 @@ export default function AppNavigator() {
       {!role && (
         <>
           <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="RegisterClient" component={RegisterClientScreen} />
+          <Stack.Screen name="RegisterContractor" component={RegisterContractorScreen} />
+          <Stack.Screen name="RegisterRole" component={RegisterRoleScreen} />
         </>
       )}
 

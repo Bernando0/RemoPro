@@ -13,6 +13,7 @@ import NoticeIcon from "../../assets/Notice-icon.svg";
 import ProfileIcon from "../../assets/Profile-icon.svg";
 import { myProjects, teams } from "../../mock/mockData";
 import { useNavigation } from '@react-navigation/native';
+import TeamCard from "../../components/TeamCard";
 
 
 export default function HomeScreen() {
