@@ -58,7 +58,7 @@ export default function ContractorHomeScreen() {
           style={{ height: headerHeight, opacity: projectsOpacity }}
           className="px-4 pb-2"
         >
-          <Text className="text-base font-semibold mb-2 text-black">Ваши проекты</Text>
+          <Text className="text-base font-regular mb-2 text-black">Ваши проекты</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
             {myProjects.map((project) => (
               <View key={project.id} className="w-24 h-24 mr-3 relative">
@@ -87,7 +87,7 @@ export default function ContractorHomeScreen() {
         )}
         scrollEventThrottle={16}
       >
-        <Text className="text-base font-semibold mb-3">Рекомендации</Text>
+        <Text className="text-base font-regular mb-3">Рекомендации</Text>
         {projects.map((project) => (
           <View key={project.id} className="bg-yellow-50 rounded-xl mb-4 p-3">
             <View className="flex-row mb-2">

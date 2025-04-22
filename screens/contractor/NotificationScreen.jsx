@@ -27,7 +27,7 @@ export default function NotificationScreen() {
         {notifications.length === 0 ? (
           <View className="items-center mt-10">
             <Ionicons name="notifications-off-circle-outline" size={64} color="#ccc" />
-            <Text className="mt-4 text-base font-semibold text-gray-600">Пока что уведомлений нет</Text>
+            <Text className="mt-4 text-base font-regular text-gray-600">Пока что уведомлений нет</Text>
             <Text className="text-m text-gray-400 text-center mt-1 px-6">
               Мы сообщим вам, как только появится что-то важное по вашему проекту.
             </Text>

@@ -110,7 +110,7 @@ export default function TeamDetailScreen() {
           <Image source={team.logo} className="w-16 h-16 rounded-md" />
           <View>
           <View className="flex-row items-center space-x-2">
-            <Text className="font-semibold text-lg flex-shrink">{team.name}</Text>
+            <Text className="font-regular text-lg flex-shrink">{team.name}</Text>
             <Ionicons name="star" className="ml-2" size={16} color="black" />
             <Text className="text-base">{team.rating}</Text>
             
@@ -135,18 +135,18 @@ export default function TeamDetailScreen() {
           </View>
 
           <TouchableOpacity className="bg-black py-3 rounded-xl mb-6">
-            <Text className="text-white text-center font-semibold text-base">
+            <Text className="text-white text-center font-regular text-base">
               Отправить сообщение
             </Text>
           </TouchableOpacity>
 
-          <Text className="text-lg font-semibold mb-3">Отзывы</Text>
+          <Text className="text-lg font-regular mb-3 ">Отзывы</Text>
           {team.reviews.map((review) => (
             <View key={review.id} className="bg-gray-100 p-4 rounded-xl mb-4">
               <View className="flex-row items-center space-x-2 mb-2">
                 <Image source={review.avatar} className="w-16 h-16 rounded-[8px]" />
                 <View className="ml-4">
-                  <Text className="text-xl font-semibold">
+                  <Text className="text-xl font-regular">
                     {review.name} ★ {review.rating}.0
                   </Text>
                   <Text className="text-l text-gray-500">{review.role}</Text>

@@ -34,6 +34,16 @@ export default function HomeScreen() {
 
   const navigation = useNavigation();
 
+  const HiddenTagsCount = ({ count }) => {
+      if (count <= 0) return null;
+  
+      return (
+        <View className="bg-transparent px-2 py-0.5 rounded-full mr-2 mt-2">
+          <Text className="text-xs text-gray-800">+{count}</Text>
+        </View>
+      );
+    };
+
   return (
     <View className="flex-1 bg-white">
       <View className="bg-yellow-300 rounded-b-3xl overflow-hidden">
@@ -65,7 +75,7 @@ export default function HomeScreen() {
           style={{ height: headerHeight, opacity: projectsOpacity }}
           className="px-4 pb-2"
         >
-          <Text className="text-base font-semibold mb-2 text-black">
+          <Text className="text-base font-regular mb-2 text-black">
             Ваши проекты
           </Text>
           <ScrollView
@@ -105,7 +115,7 @@ export default function HomeScreen() {
         )}
         scrollEventThrottle={16}
       >
-        <Text className="text-base font-semibold mb-3">Исполнители</Text>
+        <Text className="text-base font-regular mb-3">Исполнители</Text>
         <View className="flex-row flex-wrap justify-between">
           {teams.map((team) => {
             const visibleTags = team.tags.slice(0, 2);
@@ -138,11 +148,11 @@ export default function HomeScreen() {
                     <Text className="text-xs pl-1 text-gray-600">
                       {team.rating}
                     </Text>
-                    <Text className="text-xs pl-1 text-gray-400">
+                    <Text className="text-xs pl-1 text-gray-600">
                       ({team.reviews} отзывов)
                     </Text>
                   </View>
-                  <Text className="font-semibold text-sm" numberOfLines={2}>
+                  <Text className="font-regular text-sm" numberOfLines={2}>
                     {team.title}
                   </Text>
 
@@ -155,13 +165,7 @@ export default function HomeScreen() {
                         <Text className="text-xs text-gray-800">{tag}</Text>
                       </View>
                     ))}
-                    {hiddenTagsCount > 0 && (
-                      <View className="bg-yellow-200 px-2 py-0.5 rounded-full mr-2 mt-2">
-                        <Text className="text-xs text-gray-800">
-                          +{hiddenTagsCount}
-                        </Text>
-                      </View>
-                    )}
+                    <HiddenTagsCount count={hiddenTagsCount} />
                   </View>
                   <View className="flex-row items-center mt-1">
                     <Ionicons name="location-outline" size={14} color="#999" />

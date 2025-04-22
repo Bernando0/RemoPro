@@ -38,7 +38,7 @@ export default function TeamCard({ team }) {
           </Text>
         </View>
 
-        <Text className="font-semibold text-sm" numberOfLines={2}>
+        <Text className="font-regular text-sm" numberOfLines={2}>
           {team.title}
         </Text>
 

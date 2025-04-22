@@ -8,10 +8,10 @@ import ContractorHomeScreen from '../screens/contractor/HomeScreen';
 import ContractorProjectsScreen from '../screens/contractor/ProjectsScreen';
 import ContractorOrdersScreen from '../screens/contractor/OrdersScreen';
 import ContractorChatScreen from '../screens/contractor/ChatScreen';
-import IconChat from '../assets/Profile.svg'
-import IconOrders from '../assets/Orders.svg'
-import IconProjects from '../assets/Feed.svg'
-import IconHome from '../assets/Home.svg'
+import IconChat from '../assets/Profile.png'
+import IconOrders from '../assets/Orders.png'
+import IconProjects from '../assets/Feed.png'
+import IconHome from '../assets/Home.png'
 
 const Tab = createBottomTabNavigator();
 
@@ -30,16 +30,16 @@ const CustomTabBar = ({ state, navigation }) => {
 
           switch (route.name) {
             case 'Home':
-              icon = <IconHome name="home-outline" size={22} color={color} />;
+              icon = <Image source={IconHome} style={{ width: 50, height: 50, tintColor: color }} />;
               break;
             case 'Projects':
-              icon = <IconProjects name="layer-group" size={20} color={color} />;
+              icon = <Image source={IconProjects} style={{ width: 50, height: 50, tintColor: color }} />;
               break;
             case 'Orders':
-              icon = <IconOrders name="clipboard-outline" size={22} color={color} />;
+              icon = <Image source={IconOrders} style={{ width: 50, height: 50, tintColor: color }} />;
               break;
             case 'Chat':
-              icon = <IconChat name="message-square" size={22} color={color} />;
+              icon = <Image source={IconChat} style={{ width: 50, height: 50, tintColor: color }} />;
               break;
           }
 
@@ -102,9 +102,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#fff',
   },
-  
   activeTab: {
-    backgroundColor: '#fff',
+    backgroundColor: '#000',
     borderWidth: 2,
     borderColor: '#000',
   },

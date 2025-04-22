@@ -41,7 +41,7 @@ export default function ProjectsScreen() {
 
         {/* Кнопка */}
         <TouchableOpacity className="bg-yellow-300 border border-black py-3 px-5 rounded-xl mt-2 items-center">
-  <Text className="text-black font-semibold text-sm">
+  <Text className="text-black font-regular text-sm">
     Создать проект с <Text className="font-bold">RemoAI</Text>
   </Text>
 </TouchableOpacity>

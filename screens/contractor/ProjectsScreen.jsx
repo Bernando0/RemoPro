@@ -87,10 +87,10 @@ export default function ContractorProjectsScreen() {
 
       <View className="flex-row space-x-4">
         <TouchableOpacity className="flex-1 bg-black py-2 rounded-lg">
-          <Text className="text-white text-center text-sm font-semibold">Принять</Text>
+          <Text className="text-white text-center text-sm font-regular">Принять</Text>
         </TouchableOpacity>
         <TouchableOpacity className="flex-1 border border-black py-2 rounded-lg">
-          <Text className="text-black text-center text-sm font-semibold">Отказаться</Text>
+          <Text className="text-black text-center text-sm font-regular">Отказаться</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -127,10 +127,10 @@ export default function ContractorProjectsScreen() {
       <ScrollView className="px-4 pt-4" contentContainerStyle={{ paddingBottom: 60 }}>
         {activeTab === "projects" ? (
           <>
-            <Text className="text-base font-semibold mb-2">Активные</Text>
+            <Text className="text-base font-regular mb-2">Активные</Text>
             {contractorProjects.active.map(renderProjectCard)}
 
-            <Text className="text-base font-semibold mt-4 mb-2">Выполненные</Text>
+            <Text className="text-base font-regular mt-4 mb-2">Выполненные</Text>
             {contractorProjects.completed.map(renderProjectCard)}
           </>
         ) : (

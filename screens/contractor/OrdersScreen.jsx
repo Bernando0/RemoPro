@@ -50,7 +50,7 @@ export default function OrdersScreen() {
 
       {/* Список проектов */}
       <ScrollView className="flex-1 px-4 pt-2" contentContainerStyle={{ paddingBottom: 60 }}>
-        <Text className="text-base font-semibold mb-3">Проекты</Text>
+        <Text className="text-base font-regular mb-3">Проекты</Text>
         {projects.map((project) => (
           <View key={project.id} className="bg-yellow-50 rounded-xl mb-4 p-3">
             <View className="flex-row mb-2">

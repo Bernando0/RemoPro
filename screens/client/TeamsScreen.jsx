@@ -10,22 +10,30 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { teams } from "../../mock/mockData";
 import { useState } from "react";
-import { Modal, Pressable } from "react-native";
 import FilterHeader from "../../components/TeamsFilter";
 import NoticeIcon from "../../assets/Notice-icon.svg";
 import ProfileIcon from "../../assets/Profile-icon.svg";
 import ArrowIcon from "../../assets/Arrow-icon.svg";
 
-
 export default function TeamsScreen() {
+  const [city, setCity] = useState("Алматы");
+  const [cityModalVisible, setCityModalVisible] = useState(false);
+  const [filtersVisible, setFiltersVisible] = useState(false);
 
-    const [city, setCity] = useState("Алматы");
-    const [cityModalVisible, setCityModalVisible] = useState(false);
-    const [filtersVisible, setFiltersVisible] = useState(false);
-  
-    const cities = ["Алматы", "Астана", "Шымкент"];
-    const allFilters = ["Отделка", "Электрика", "Дизайн", "Плитка", "Мебель"];
-  
+  const cities = ["Алматы", "Астана", "Шымкент"];
+  const allFilters = ["Отделка", "Электрика", "Дизайн", "Плитка", "Мебель"];
+
+  // Компонент для отображения количества скрытых тегов
+  const HiddenTagsCount = ({ count }) => {
+    if (count <= 0) return null;
+
+    return (
+      <View className="bg-transparent px-2 py-0.5 rounded-full mr-2 mt-2">
+        <Text className="text-xs text-gray-800">+{count}</Text>
+      </View>
+    );
+  };
+
   return (
     <View className="flex-1 bg-white">
       {/* Хедер */}
@@ -43,7 +51,6 @@ export default function TeamsScreen() {
             />
           </View>
 
-
           <View className="flex-row space-x-2">
             <TouchableOpacity className="p-1">
               <NoticeIcon size={36} />
@@ -54,11 +61,9 @@ export default function TeamsScreen() {
           </View>
         </View>
       </View>
-      <View className="mb-4 mt-2" >
-      <FilterHeader />
+      <View className="mb-4 mt-2">
+        <FilterHeader />
       </View>
-
-      
 
       {/* Список исполнителей */}
       <ScrollView
@@ -99,7 +104,7 @@ export default function TeamsScreen() {
                     </Text>
                   </View>
 
-                  <Text className="font-semibold text-sm" numberOfLines={2}>
+                  <Text className="font-regular text-sm" numberOfLines={2}>
                     {team.title}
                   </Text>
 
@@ -112,13 +117,7 @@ export default function TeamsScreen() {
                         <Text className="text-xs text-gray-800">{tag}</Text>
                       </View>
                     ))}
-                    {hiddenTagsCount > 0 && (
-                      <View className="bg-yellow-200 px-2 py-0.5 rounded-full mr-2 mt-2">
-                        <Text className="text-xs text-gray-800">
-                          +{hiddenTagsCount}
-                        </Text>
-                      </View>
-                    )}
+                    <HiddenTagsCount count={hiddenTagsCount} />
                   </View>
 
                   <View className="flex-row items-center mt-1">

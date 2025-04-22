@@ -27,7 +27,7 @@ export default function NotificationScreen() {
         {notifications.length === 0 ? (
           <View className="items-center mt-10">
             <Ionicons name="notifications-off-circle-outline" size={64} color="#ccc" />
-            <Text className="mt-4 text-base font-semibold text-gray-600">Пока что уведомлений нет</Text>
+            <Text className="mt-4 text-base font-regular text-gray-600">Пока что уведомлений нет</Text>
             <Text className="text-m text-gray-400 text-center mt-1 px-6">
               Мы сообщим вам, как только появится что-то важное по вашему проекту.
             </Text>
@@ -77,7 +77,7 @@ export default function NotificationScreen() {
                     <View className="flex-row items-start space-x-3 mb-2">
                       <Image source={item.team.logo} className="w-20 h-20 rounded-md" />
                       <View className="flex-1 pl-2">
-                        <Text className="font-semibold text-base">{item.team.name}</Text>
+                        <Text className="font-regular text-base">{item.team.name}</Text>
                         <Text className="text-m text-gray-700 mt-1">
                           откликнулась на ваш проект
                         </Text>
@@ -98,12 +98,12 @@ export default function NotificationScreen() {
                     {/* Кнопки */}
                     <View className="flex-row space-x-2">
                       <TouchableOpacity className="flex-1 bg-black py-2 m-1 rounded-lg">
-                        <Text className="text-white text-center  text-sm font-semibold">
+                        <Text className="text-white text-center  text-sm font-regular">
                           Подтвердить
                         </Text>
                       </TouchableOpacity>
                       <TouchableOpacity className="flex-1 border border-black py-2 m-1 rounded-lg">
-                        <Text className="text-black text-center  text-sm font-semibold">
+                        <Text className="text-black text-center  text-sm font-regular">
                           Отказаться
                         </Text>
                       </TouchableOpacity>
