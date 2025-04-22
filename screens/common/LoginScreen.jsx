@@ -34,13 +34,9 @@ export default function LoginScreen() {
       const data = await response.json();
       setAuth({ role: data.role, username: data.username, token: data.token });
 
-      if (data.role === "ROLE_USER") {
-        navigation.replace("Client");
-      } else if (data.role === "ROLE_CONTRACTOR") {
-        navigation.replace("Contractor");
-      } else {
+      if (data.role !== "ROLE_CLIENT" && data.role !== "ROLE_CONTRACTOR") {
         Alert.alert("Ошибка", "Неизвестная роль пользователя");
-      }
+      }      
     } catch (err) {
       Alert.alert("Ошибка входа", err.message);
     }
