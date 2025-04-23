@@ -12,6 +12,7 @@ import ContractorNavigator from "./ContractorTabsNavigator";
 import TeamDetailScreen from "../screens/client/TeamDetailScreen";
 import UserProfileScreen from "../screens/client/UserProfileScreen";
 import ContractorProfileScreen from "../screens/contractor/ContractorProfileScreen";
+import EditContractorProfileScreen from "../screens/contractor/EditContractorProfileScreen";
 import ClientNotificationScreen from "../screens/client/NotificationScreen";
 import ContractorNotificationScreen from "../screens/contractor/NotificationScreen";
 
@@ -46,6 +47,7 @@ export default function AppNavigator() {
         <>
           <Stack.Screen name="Contractor" component={ContractorNavigator} />
           <Stack.Screen name="ContractorProfile" component={ContractorProfileScreen} />
+          <Stack.Screen name="EditContractorProfile" component={EditContractorProfileScreen} />
           <Stack.Screen name="ContractorNotification" component={ContractorNotificationScreen} />
         </>
       )}
