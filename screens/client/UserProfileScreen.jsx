@@ -152,9 +152,9 @@ export default function UserProfileScreen() {
 
           <View className="flex-1 flex-row ml-3 justify-between items-center">
             <View>
-              <Text className="text-lg font-bold text-black">{profile.fullName}</Text>
+              <Text className="text-lg font-bold text-black">{profile.userId.accountName}</Text>
               <Text className="text-sm text-black">
-                {profile.userId.role?.roleTag === "ROLE_CLIENT" ? "Клиент" : "Подрядчик"}
+                {profile.userId.role?.roleTag === "ROLE_CLIENT" ? "Клиент" : "Исполнитель"}
               </Text>
             </View>
             <TouchableOpacity
@@ -171,9 +171,6 @@ export default function UserProfileScreen() {
 
       {/* Основные данные */}
       <ScrollView className="px-4 pt-4" contentContainerStyle={{ paddingBottom: 80 }}>
-        <Text className="text-xs text-gray-400 mb-1">Имя аккаунта</Text>
-        <Text className="text-base font-medium mb-3">{profile.userId.accountName}</Text>
-
         <Text className="text-xs text-gray-400 mb-1">Электронная почта</Text>
         <Text className="text-base font-medium mb-3">{profile.userId.email}</Text>
 
@@ -242,8 +239,8 @@ export default function UserProfileScreen() {
       <View className="space-y-2">
         <Text className="text-sm font-semibold text-gray-700">Имя аккаунта</Text>
         <TextInput
-          value={fullName}
-          onChangeText={setFullName}
+          value={accountName}
+          onChangeText={setAccountName}
           placeholder="Введите имя"
           className="border border-gray-300 rounded-xl px-4 py-3 "
         />
