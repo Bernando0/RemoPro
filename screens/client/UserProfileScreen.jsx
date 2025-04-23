@@ -143,10 +143,10 @@ export default function UserProfileScreen() {
             {logo ? (
               <Image source={{ uri: logo.uri }} className="w-16 h-16 rounded-[8px]" />
             ) : (
-              <Ionicons name="person-outline" size={32} color="#999" />
+              <Ionicons name="person-outline" size={36} color="#999" />
             )}
-            <View className="absolute bottom-0 right-0 bg-white rounded-full p-1">
-              <Ionicons name="create-outline" size={14} color="black" />
+            <View className="absolute bottom-0 right-0 bg-none p-1 ">
+              <Ionicons name="create-outline" size={14} color="white" />
             </View>
           </TouchableOpacity>
 
@@ -159,9 +159,10 @@ export default function UserProfileScreen() {
             </View>
             <TouchableOpacity
               onPress={() => setModalVisible(true)}
-              className="p-2"
+              className="self-end mb-4 flex-row items-center"
             >
-              <Ionicons name="create-outline" size={24} color="black" />
+              <Text className="text-sm font-medium text-black mr-1">Редактировать</Text>
+              <Ionicons name="create-outline" size={18} color="black" />
             </TouchableOpacity>
           </View>
         </View>
@@ -171,18 +172,25 @@ export default function UserProfileScreen() {
 
       {/* Основные данные */}
       <ScrollView className="px-4 pt-4" contentContainerStyle={{ paddingBottom: 80 }}>
-        <Text className="text-xs text-gray-400 mb-1">Электронная почта</Text>
-        <Text className="text-base font-medium mb-3">{profile.userId.email}</Text>
 
-        <Text className="text-xs text-gray-400 mb-1">Телефон</Text>
-        <Text className="text-base font-medium mb-3">{profile.userId.phone}</Text>
+      <Text className="text-xs text-gray-400 mb-1">Электронная почта</Text>
+      <View className="bg-white border border-gray-300 rounded-2xl px-3 py-3 mb-4">
+        <Text className="text-base font-medium text-black">{profile.userId.email}</Text>
+      </View>
+
+      <Text className="text-xs text-gray-400 mb-1">Телефон</Text>
+      <View className="bg-white border border-gray-300 rounded-2xl px-3 py-3 mb-4">
+        <Text className="text-base font-medium text-black">{profile.userId.phone}</Text>
+      </View>
+
+
 
        <View className="mb-4">
-  <Text className="text-xs text-gray-400 mb-1">Язык</Text>
-  <TouchableOpacity
-    className="border border-gray-300 rounded-xl px-3 py-3"
-    onPress={() => setLanguageModalVisible(true)}
-  >
+        <Text className="text-xs text-gray-400 mb-1">Язык</Text>
+    <TouchableOpacity
+      className="border border-gray-300 rounded-xl px-3 py-3"
+      onPress={() => setLanguageModalVisible(true)}
+    >
     <Text className="text-base font-medium">
       {languages.find((l) => l.value === selectedLanguage)?.label}
     </Text>
@@ -218,7 +226,7 @@ export default function UserProfileScreen() {
 {/* Кнопка выхода */}
 <View className=" pb-6">
   <TouchableOpacity
-    className="w-full bg-red-500 py-3 rounded-xl items-center mt-4"
+    className="w-full bg-red-500 py-3 rounded-2xl items-center mt-6"
     onPress={() => {
       useAuthStore.getState().logout(); // вызываем logout из store // возвращаемся на экран входа
     }}
@@ -232,9 +240,9 @@ export default function UserProfileScreen() {
 
       {/* Модалка редактирования */}
       <Modal visible={modalVisible} transparent={true}>
-  <View className="flex-1 bg-black/50 justify-center items-center px-6">
-    <View className="bg-white w-full rounded-2xl p-6 space-y-6">
-      <Text className="text-xl font-bold text-center">Редактировать профиль</Text>
+  <View className="flex-1 bg-black/60 justify-center items-center px-6">
+    <View className="bg-white w-full rounded-2xl p-6 space-y-6 ">
+      <Text className="text-xl font-bold text-center mb-4">Редактировать профиль</Text>
 
       <View className="space-y-2">
         <Text className="text-sm font-semibold text-gray-700">Имя аккаунта</Text>
@@ -264,7 +272,7 @@ export default function UserProfileScreen() {
         </View>
       </View>
 
-      <View className="flex-row space-x-4 pt-4">
+      <View className="flex-row space-x-4 pt-4 mt-4">
         <TouchableOpacity
           onPress={() => setModalVisible(false)}
           className="flex-1 py-2 mr-1 rounded-xl border border-black items-center"

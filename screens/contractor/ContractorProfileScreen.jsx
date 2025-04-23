@@ -89,9 +89,10 @@ export default function ContractorProfileScreen() {
             </View>
             <TouchableOpacity
               onPress={() => navigation.navigate("EditContractorProfile")}
-              className="p-2"
+              className="self-end mb-4 flex-row items-center"
             >
-              <Ionicons name="create-outline" size={24} color="black" />
+              <Text className="text-sm font-medium text-black mr-1">Редактировать</Text>
+              <Ionicons name="create-outline" size={18} color="black" />
             </TouchableOpacity>
           </View>
         </View>
@@ -102,14 +103,22 @@ export default function ContractorProfileScreen() {
         contentContainerStyle={{ paddingBottom: 80 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
+
+
         <Text className="text-xs text-gray-400 mb-1">Email</Text>
-        <Text className="text-base font-medium mb-4">{profile.user_data.email}</Text>
+          <View className="bg-white border border-gray-300 rounded-2xl px-3 py-3 mb-4">
+          <Text className="text-base font-medium text-black">{profile.user_data.email}</Text>
+        </View>
 
         <Text className="text-xs text-gray-400 mb-1">Краткое описание</Text>
-        <Text className="text-base font-medium mb-4">{profile.shortDescription}</Text>
+        <View className="bg-white border border-gray-300 rounded-2xl px-3 py-3 mb-4">
+          <Text className="text-base font-medium">{profile.shortDescription}</Text>
+        </View>
 
         <Text className="text-xs text-gray-400 mb-1">Полное описание</Text>
-        <Text className="text-base font-medium mb-4">{profile.fullDescription}</Text>
+        <View className="bg-white border border-gray-300 rounded-2xl px-3 py-3 mb-4">
+          <Text className="text-base font-medium">{profile.fullDescription}</Text>
+        </View>
 
         <Text className="text-xs text-gray-400 mb-1">Категории работ</Text>
         <View className="flex-row flex-wrap mb-4">

@@ -19,29 +19,29 @@ export default function OrdersScreen() {
     <View className="flex-1 bg-white">
       {/* Header */}
       <View className="bg-yellow-300 px-4 pt-20 pb-4 rounded-b-3xl">
-        <View className="flex-row items-center justify-between mb-2">
-          <TouchableOpacity className="p-1">
-            <ArrowIcon name="arrow-back" size={36} />
-          </TouchableOpacity>
-
-          <View className="flex-1 mx-2 border border-black h-[36px] rounded-[12px] px-3 py-1 flex-row items-center">
-            <TextInput
-              className="flex-1 ml-2 text-l"
-              placeholder="Поиск..."
-              placeholderTextColor="#000000"
-            />
-          </View>
-
-          <View className="flex-row space-x-3">
-            <TouchableOpacity>
-              <NoticeIcon width={36} height={36} />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <ProfileIcon width={36} height={36} />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+              <View className="flex-row items-center justify-between mb-2">
+                <TouchableOpacity className="p-1">
+                  <ArrowIcon name="arrow-back" size={36} />
+                </TouchableOpacity>
+      
+                <View className="w-[60%] border border-black h-[36px] rounded-[12px] px-3 py-1 flex-row items-center">
+                  <TextInput
+                    className="flex-1 ml-2 text-base"
+                    placeholder="Поиск..."
+                    placeholderTextColor="#000000"
+                  />
+                </View>
+      
+                <View className="flex-row space-x-2">
+                  <TouchableOpacity className="p-1">
+                    <NoticeIcon size={36} />
+                  </TouchableOpacity>
+                  <TouchableOpacity className="p-1">
+                    <ProfileIcon size={36} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
 
       {/* Фильтры */}
       <View className="mb-4 mt-2">
