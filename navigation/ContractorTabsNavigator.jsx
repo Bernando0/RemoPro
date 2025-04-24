@@ -5,7 +5,6 @@ import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons, FontAwesome5, Feather } from '@expo/vector-icons';
-import { Image } from 'react-native';
 import ContractorHomeScreen from '../screens/contractor/HomeScreen';
 import ContractorProjectsScreen from '../screens/contractor/ProjectsScreen';
 import ContractorOrdersScreen from '../screens/contractor/OrdersScreen';
