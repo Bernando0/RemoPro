@@ -98,53 +98,65 @@ export default function TeamDetailScreen() {
 
         {/* Контент */}
         <View className="px-4 pt-4">
-  <View className="flex-row items-center mb-4 space-x-3">
-    <Image
-      source={
-        team.profileImg
-          ? { uri: `${BACKEND_URL}${team.profileImg}` }
-          : require("../../assets/Inbox.png")
-      }
-      className="w-16 h-16 rounded-md"
-    />
-    <View>
-      <Text className="text-lg font-semibold">{team.fullName}</Text>
-      <Text className="text-gray-500 text-sm">{team.account_name}</Text>
-    </View>
-  </View>
+          <View className="flex-row items-center mb-4 space-x-3">
+            <Image
+              source={
+                team.profileImg
+                  ? { uri: `${BACKEND_URL}${team.profileImg}` }
+                  : require("../../assets/Inbox.png")
+              }
+              className="w-16 h-16 rounded-md"
+            />
+            <View>
+              <Text className="text-lg font-semibold">{team.fullName}</Text>
+              <Text className="text-gray-500 text-sm">{team.account_name}</Text>
+            </View>
+          </View>
 
-  <Text className="text-base text-black mb-2">{team.shortDescription}</Text>
-  <Text className="text-sm text-gray-700 mb-4 leading-5">
-    {team.fullDescription}
-  </Text>
+          {/* О команде */}
+          
+          <Text className="text-base text-black mb-2">
+            {team.shortDescription}
+          </Text>
+          <Text className="text-lg font-semibold mb-2">О команде</Text>
+          <Text className="text-sm text-gray-700 mb-6 leading-5">
+            {team.fullDescription}
+          </Text>
 
-  <View className="flex-row flex-wrap gap-2 mb-6">
-    {(team.categories || []).map((tag, index) => (
-      <View key={index} className="bg-yellow-200 px-3 py-1 rounded-full">
-        <Text className="text-sm text-gray-800">{tag}</Text>
-      </View>
-    ))}
-  </View>
+          {/* Категории */}
+          {team.categories?.length > 0 && (
+            <>
+              <Text className="text-lg font-semibold mb-2">Категории</Text>
+              <View className="flex-row flex-wrap gap-2 mb-6">
+                {team.categories.map((tag, index) => (
+                  <View key={index} className="bg-yellow-200 px-3 py-1 rounded-full">
+                    <Text className="text-sm text-gray-800">{tag}</Text>
+                  </View>
+                ))}
+              </View>
+            </>
+          )}
 
-  {/* Новый блок — контактные данные */}
-  <View className="space-y-2 mb-6">
-    <View className="flex-row items-center">
-      <Ionicons name="mail-outline" size={18} color="#555" />
-      <Text className="ml-2 text-gray-700">{team.email}</Text>
-    </View>
-    <View className="flex-row items-center">
-      <Ionicons name="call-outline" size={18} color="#555" />
-      <Text className="ml-2 text-gray-700">{team.phone}</Text>
-    </View>
-  </View>
+          {/* Контактная информация */}
+          <Text className="text-lg font-semibold mb-2">Контактная информация</Text>
+          <View className="space-y-2 mb-6">
+            <View className="flex-row items-center">
+              <Ionicons name="mail-outline" size={18} color="#555" />
+              <Text className="ml-2 text-gray-700">{team.email}</Text>
+            </View>
+            <View className="flex-row items-center">
+              <Ionicons name="call-outline" size={18} color="#555" />
+              <Text className="ml-2 text-gray-700">{team.phone}</Text>
+            </View>
+          </View>
 
-  <TouchableOpacity className="bg-black py-3 rounded-xl mb-6">
-    <Text className="text-white text-center font-regular text-base">
-      Отправить сообщение
-    </Text>
-  </TouchableOpacity>
-</View>
-
+          {/* Кнопка */}
+          <TouchableOpacity className="bg-white border border-black b py-3 rounded-xl mb-6">
+            <Text className="text-black text-center font-semibold text-base">
+              Отправить сообщение
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
 
       {/* Просмотр фото в полноэкранном режиме */}
