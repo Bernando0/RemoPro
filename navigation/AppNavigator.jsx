@@ -14,6 +14,8 @@ import UserProfileScreen from "../screens/client/UserProfileScreen";
 import ContractorProfileScreen from "../screens/contractor/ContractorProfileScreen";
 import EditContractorProfileScreen from "../screens/contractor/EditContractorProfileScreen";
 import ClientNotificationScreen from "../screens/client/NotificationScreen";
+import ProjectsScreen from "../screens/client/ProjectsScreen";
+import ProjectDetailScreen from "../screens/client/ProjectDetailScreen";
 import ProjectCreateStep1Screen from "../screens/client/projectCreate/ProjectCreateStep1Screen";
 import ProjectCreateStep2Screen from "../screens/client/projectCreate/ProjectCreateStep2Screen";
 import ProjectCreateStep3Screen from "../screens/client/projectCreate/ProjectCreateStep3Screen";
@@ -45,6 +47,8 @@ export default function AppNavigator() {
           <Stack.Screen name="CreateProjectStep1" component={ProjectCreateStep1Screen} />
           <Stack.Screen name="CreateProjectStep2" component={ProjectCreateStep2Screen} />
           <Stack.Screen name="CreateProjectStep3" component={ProjectCreateStep3Screen} />
+          <Stack.Screen name="ProjectsScreen" component={ProjectsScreen} />
+          <Stack.Screen name="ProjectDetail" component={ProjectDetailScreen} />
         </>
       )}
 

@@ -1,54 +1,81 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   ScrollView,
   Image,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { projects } from "../../mock/projectsData";
+import { useNavigation } from "@react-navigation/native";
 
 import Logo from "../../assets/logo.svg";
 import NoticeIcon from "../../assets/Notice-icon.svg";
 import ProfileIcon from "../../assets/Profile-icon.svg";
 import ArrowIcon from "../../assets/Arrow-icon.svg";
-import { useNavigation } from "@react-navigation/native";
+import { BACKEND_URL } from "../../utils/config";
+import { useAuthStore } from "../../store/authStore";
 
 export default function ProjectsScreen() {
-
+  const token = useAuthStore((state) => state.token);
   const navigation = useNavigation();
+
+  const [projects, setProjects] = useState([]);
+  const [activeProjectId, setActiveProjectId] = useState(null);
+
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/api/project/all`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then(setProjects)
+      .catch((err) => console.error("Ошибка загрузки проектов", err));
+  }, []);
+
+  const toggleOptions = (id) => {
+    setActiveProjectId((prev) => (prev === id ? null : id));
+  };
+
+  const handleEdit = (id) => {
+    Alert.alert("Редактирование", `Редактировать проект с ID ${id}`);
+  };
+
+  const handleDelete = (id) => {
+    Alert.alert("Удаление", `Удалить проект с ID ${id}`);
+  };
+
   return (
     <View className="flex-1 bg-white">
       {/* Хедер */}
       <View className="bg-yellow-300 px-4 pt-20 pb-4 rounded-b-3xl">
         <View className="flex-row items-center justify-between mb-2">
           <TouchableOpacity className="p-1">
-             <ArrowIcon name="arrow-back" size={36} />
+            <ArrowIcon width={36} height={36} />
           </TouchableOpacity>
-          {/* Логотип по центру */}
-    <View className="absolute left-0 right-0 items-center z-0">
-    <Logo width={130} height={20} />
-    </View>
+          <View className="absolute left-0 right-0 items-center z-0">
+            <Logo width={130} height={20} />
+          </View>
           <View className="flex-row space-x-2">
-          <TouchableOpacity className="p-1">
-            <NoticeIcon size={36} />
-          </TouchableOpacity>
-          <TouchableOpacity className="p-1">
-            <ProfileIcon size={36} />
-          </TouchableOpacity>
-
+            <TouchableOpacity className="p-1">
+              <NoticeIcon width={36} height={36} />
+            </TouchableOpacity>
+            <TouchableOpacity className="p-1">
+              <ProfileIcon width={36} height={36} />
+            </TouchableOpacity>
           </View>
         </View>
 
-        {/* Кнопка */}
-        <TouchableOpacity className="bg-yellow-300 border border-black py-3 px-5 rounded-xl mt-2 items-center"
-        onPress={() => navigation.navigate("CreateProjectStep1")}>
-  <Text className="text-black font-regular text-sm">
-    Создать проект с <Text className="font-bold">RemoAI</Text>
-  </Text>
-</TouchableOpacity>
-
+        <TouchableOpacity
+          className="bg-yellow-300 border border-black py-3 px-5 rounded-xl mt-2 items-center"
+          onPress={() => navigation.navigate("CreateProjectStep1")}
+        >
+          <Text className="text-black font-regular text-sm">
+            Создать проект с <Text className="font-bold">RemoAI</Text>
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {/* Список проектов */}
@@ -57,56 +84,54 @@ export default function ProjectsScreen() {
         contentContainerStyle={{ paddingBottom: 60 }}
       >
         {projects.map((project) => (
-          <View
+          <TouchableOpacity
             key={project.id}
-            className="bg-yellow-50 rounded-xl mb-4 p-3 "
+            onPress={() => navigation.navigate("ProjectDetail", { projectId: project.id })}
+            className="bg-yellow-50 rounded-xl mb-4 p-3 relative"
           >
             <View className="flex-row mb-2">
               <Image
-                source={project.image}
+                source={{ uri: `${BACKEND_URL}${project.sourceImg}` }}
                 className="w-20 h-20 rounded-md mr-3"
               />
               <View className="flex-1">
-                <Text numberOfLines={3} className="text-s text-black mb-1">
+                <Text numberOfLines={2} className="text-base font-medium text-black mb-1">
+                  {project.title}
+                </Text>
+                <Text numberOfLines={3} className="text-xs text-gray-500">
                   {project.description}
                 </Text>
-                <Text className="text-[10px] text-gray-500">
-                  {project.date}
-                </Text>
               </View>
-              <TouchableOpacity>
-                <Ionicons name="ellipsis-horizontal" size={18} color="#999" />
+
+              {/* Троеточие */}
+              <TouchableOpacity onPress={() => toggleOptions(project.id)}>
+                <Ionicons name="ellipsis-horizontal" size={20} color="#999" />
               </TouchableOpacity>
+
+              {activeProjectId === project.id && (
+                <View className="absolute top-2 right-2 bg-white border border-gray-200 rounded-md shadow px-3 py-2 z-10">
+                  <TouchableOpacity onPress={() => handleEdit(project.id)}>
+                    <Text className="text-sm mb-2">Редактировать</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => handleDelete(project.id)}>
+                    <Text className="text-sm text-red-500">Удалить</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
 
-            {/* Теги */}
+            {/* Теги (категории) */}
             <View className="flex-row flex-wrap">
               {project.tags.map((tag, i) => (
                 <View
                   key={i}
                   className="bg-yellow-200 px-2 py-1 rounded-full mr-2 mb-2"
                 >
-                  <Text className="text-xs text-black">{tag}</Text>
+                  <Text className="text-xs text-black">{tag.category}</Text>
                 </View>
               ))}
             </View>
-
-            {/* Статистика */}
-            <View className="flex-row items-center space-x-4 mt-1">
-              <View className="flex-row items-center space-x-1">
-                <Ionicons name="chatbubble-outline" size={12} color="#999" />
-                <Text className="text-xs text-gray-500">
-                  {project.comments || 0}
-                </Text>
-              </View>
-              <View className="flex-row items-center ml-2 space-x-1">
-                <Ionicons name="eye-outline" size={12} color="#999" />
-                <Text className="text-xs text-gray-500">
-                  {project.views || 0}
-                </Text>
-              </View>
-            </View>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
     </View>
