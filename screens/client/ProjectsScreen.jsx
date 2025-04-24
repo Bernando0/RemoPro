@@ -13,9 +13,11 @@ import Logo from "../../assets/logo.svg";
 import NoticeIcon from "../../assets/Notice-icon.svg";
 import ProfileIcon from "../../assets/Profile-icon.svg";
 import ArrowIcon from "../../assets/Arrow-icon.svg";
-
+import { useNavigation } from "@react-navigation/native";
 
 export default function ProjectsScreen() {
+
+  const navigation = useNavigation();
   return (
     <View className="flex-1 bg-white">
       {/* Хедер */}
@@ -40,7 +42,8 @@ export default function ProjectsScreen() {
         </View>
 
         {/* Кнопка */}
-        <TouchableOpacity className="bg-yellow-300 border border-black py-3 px-5 rounded-xl mt-2 items-center">
+        <TouchableOpacity className="bg-yellow-300 border border-black py-3 px-5 rounded-xl mt-2 items-center"
+        onPress={() => navigation.navigate("CreateProjectStep1")}>
   <Text className="text-black font-regular text-sm">
     Создать проект с <Text className="font-bold">RemoAI</Text>
   </Text>
