@@ -1,36 +1,51 @@
-// screens/client/TeamDetailScreen.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   Image,
   ScrollView,
   TouchableOpacity,
-  Modal,
   Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Swiper from "react-native-swiper";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { teamDetails } from "../../mock/teamDetailMockData";
 import ImageView from "react-native-image-viewing";
-import { Image as RNImage } from "react-native";
 import ArrowIcon from "../../assets/Arrow-icon.svg";
-
-
+import { BACKEND_URL } from "../../utils/config";
+import { useAuthStore } from "../../store/authStore";
 
 const { width } = Dimensions.get("window");
-const imageHeight = width * 0.75;
 
 export default function TeamDetailScreen() {
-  const route = useRoute();
+  const { teamId } = useRoute().params;
   const navigation = useNavigation();
-  const { teamId } = route.params;
-  const team = teamDetails[teamId];
+  const token = useAuthStore((state) => state.token);
 
+  const [team, setTeam] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalIndex, setModalIndex] = useState(0);
   const [modalImages, setModalImages] = useState([]);
+
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/api/contractor/${teamId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then(setTeam)
+      .catch((err) => {
+        console.error("Ошибка загрузки данных команды:", err);
+      });
+  }, [teamId]);
+
+  const openModal = (images, index) => {
+    const formatted = images.map((img) => ({
+      uri: `${BACKEND_URL}${img.img}`,
+    }));
+    setModalImages(formatted);
+    setModalIndex(index);
+    setModalVisible(true);
+  };
 
   if (!team) {
     return (
@@ -40,63 +55,40 @@ export default function TeamDetailScreen() {
     );
   }
 
-  const openModal = (images, index) => {
-    const formatted = images.map((img) => ({ uri: RNImage.resolveAssetSource(img).uri }));
-    setModalImages(formatted);
-    setModalIndex(index);
-    setModalVisible(true);
-  };
-
   return (
     <View className="flex-1 bg-white">
       <ScrollView contentContainerStyle={{ paddingBottom: 60 }}>
-        {/* Header Image Carousel */}
+        {/* Карусель изображений */}
         <View className="relative">
-        <Swiper
-  showsPagination={true}
-  height={220}
-  loop={false}
-  paginationStyle={{ bottom: 1 }}
-  dot={
-    <View
-      style={{
-        backgroundColor: "rgba(255,255,255,0.5)",
-        width: 6,
-        height: 6,
-        borderRadius: 3,
-        marginHorizontal: 3,
-        marginBottom:4
-      }}
-    />
-  }
-  activeDot={
-    <View
-      style={{
-        backgroundColor: "#fff",
-        width: 10,
-        height: 10,
-        borderRadius: 5,
-        marginHorizontal: 3,
-        marginBottom:4
-      }}
-    />
-  }
->
-  {team.images.map((img, index) => (
-    <TouchableOpacity
-      key={`carousel-${index}`}
-      activeOpacity={0.9}
-      onPress={() => openModal(team.images, index)}
-    >
-      <Image source={img} className="w-full h-64" />
-    </TouchableOpacity>
-  ))}
-</Swiper>
+          <Swiper
+            height={220}
+            loop={false}
+            showsPagination={true}
+            paginationStyle={{ bottom: 6 }}
+            dot={
+              <View className="w-[6px] h-[6px] rounded-full mx-1 bg-white/40" />
+            }
+            activeDot={
+              <View className="w-[10px] h-[10px] rounded-full mx-1 bg-white" />
+            }
+          >
+            {(team.gallery || []).map((img, i) => (
+              <TouchableOpacity
+                key={`carousel-${i}`}
+                onPress={() => openModal(team.gallery, i)}
+              >
+                <Image
+                  source={{ uri: `${BACKEND_URL}${img.img}` }}
+                  className="w-full h-64"
+                />
+              </TouchableOpacity>
+            ))}
+          </Swiper>
 
-
+          {/* Назад и лайк */}
           <View className="absolute top-20 left-4 right-4 flex-row justify-between items-center">
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <ArrowIcon name="arrow-back" size={36} color="white" />
+              <ArrowIcon />
             </TouchableOpacity>
             <TouchableOpacity>
               <Ionicons name="heart-outline" size={36} color="white" />
@@ -104,88 +96,63 @@ export default function TeamDetailScreen() {
           </View>
         </View>
 
-        {/* Card */}
+        {/* Контент */}
         <View className="px-4 pt-4">
-          <View className="flex-row items-center mb-2 space-x-2">
-          <Image source={team.logo} className="w-16 h-16 rounded-md" />
-          <View>
-          <View className="flex-row items-center space-x-2">
-            <Text className="font-regular text-lg flex-shrink">{team.name}</Text>
-            <Ionicons name="star" className="ml-2" size={16} color="black" />
-            <Text className="text-base">{team.rating}</Text>
-            
-          </View>
-          <Text className="text-s text-gray-400">
-              ({team.reviews.length} отзывов)
-            </Text>
-            </View>
-          </View>
-          
+  <View className="flex-row items-center mb-4 space-x-3">
+    <Image
+      source={
+        team.profileImg
+          ? { uri: `${BACKEND_URL}${team.profileImg}` }
+          : require("../../assets/Inbox.png")
+      }
+      className="w-16 h-16 rounded-md"
+    />
+    <View>
+      <Text className="text-lg font-semibold">{team.fullName}</Text>
+      <Text className="text-gray-500 text-sm">{team.account_name}</Text>
+    </View>
+  </View>
 
-          <Text className="text-base text-gray-700 mb-2 leading-5">
-            {team.description}
-          </Text>
+  <Text className="text-base text-black mb-2">{team.shortDescription}</Text>
+  <Text className="text-sm text-gray-700 mb-4 leading-5">
+    {team.fullDescription}
+  </Text>
 
-          <View className="flex-row flex-wrap gap-2 mb-4">
-            {team.tags.map((tag, index) => (
-              <View key={index} className="bg-yellow-200 px-3 py-1 rounded-full">
-                <Text className="text-sm text-gray-800">{tag}</Text>
-              </View>
-            ))}
-          </View>
+  <View className="flex-row flex-wrap gap-2 mb-6">
+    {(team.categories || []).map((tag, index) => (
+      <View key={index} className="bg-yellow-200 px-3 py-1 rounded-full">
+        <Text className="text-sm text-gray-800">{tag}</Text>
+      </View>
+    ))}
+  </View>
 
-          <TouchableOpacity className="bg-black py-3 rounded-xl mb-6">
-            <Text className="text-white text-center font-regular text-base">
-              Отправить сообщение
-            </Text>
-          </TouchableOpacity>
+  {/* Новый блок — контактные данные */}
+  <View className="space-y-2 mb-6">
+    <View className="flex-row items-center">
+      <Ionicons name="mail-outline" size={18} color="#555" />
+      <Text className="ml-2 text-gray-700">{team.email}</Text>
+    </View>
+    <View className="flex-row items-center">
+      <Ionicons name="call-outline" size={18} color="#555" />
+      <Text className="ml-2 text-gray-700">{team.phone}</Text>
+    </View>
+  </View>
 
-          <Text className="text-lg font-regular mb-3 ">Отзывы</Text>
-          {team.reviews.map((review) => (
-            <View key={review.id} className="bg-gray-100 p-4 rounded-xl mb-4">
-              <View className="flex-row items-center space-x-2 mb-2">
-                <Image source={review.avatar} className="w-16 h-16 rounded-[8px]" />
-                <View className="ml-4">
-                  <Text className="text-xl font-regular">
-                    {review.name} ★ {review.rating}.0
-                  </Text>
-                  <Text className="text-l text-gray-500">{review.role}</Text>
-                </View>
-              </View>
-              <Text className="text-m text-gray-800 mb-3 leading-5">
-                {review.text}
-              </Text>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                className="space-x-3"
-              >
-                {review.photos.map((photo, i) => (
-                  <TouchableOpacity
-                  key={`modal-${i}-${modalImages.length}`}
-                    onPress={() => openModal(review.photos, i)}
-                    style={{ marginRight: 10 }}
-                  >
-                    <Image
-                      source={photo}
-                      className="w-24 h-24 rounded-md"
-                    />
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
-          ))}
-        </View>
+  <TouchableOpacity className="bg-black py-3 rounded-xl mb-6">
+    <Text className="text-white text-center font-regular text-base">
+      Отправить сообщение
+    </Text>
+  </TouchableOpacity>
+</View>
+
       </ScrollView>
 
-      {/* Modal for Images */}
+      {/* Просмотр фото в полноэкранном режиме */}
       <ImageView
         images={modalImages}
         imageIndex={modalIndex}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
-        swipeToCloseEnabled={true}
-        doubleTapToZoomEnabled={true}
       />
     </View>
   );

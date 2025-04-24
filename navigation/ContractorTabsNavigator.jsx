@@ -1,7 +1,8 @@
 // navigation/ContractorTabsNavigator.jsx
 
+
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons, FontAwesome5, Feather } from '@expo/vector-icons';
 import { Image } from 'react-native';
