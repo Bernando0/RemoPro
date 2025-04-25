@@ -13,6 +13,7 @@ import { BACKEND_URL } from "../../utils/config";
 import Logo from "../../assets/logo.svg";
 import NoticeIcon from "../../assets/Notice-icon.svg";
 import ProfileIcon from "../../assets/Profile-icon.svg";
+import ArrowIcon from "../../assets/Arrow-icon.svg";
 
 export default function ProjectDetailScreen() {
   const { params } = useRoute();
@@ -44,34 +45,38 @@ export default function ProjectDetailScreen() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       {/* Хедер */}
       <View className="bg-yellow-300 px-4 pt-20 pb-4 rounded-b-3xl">
         <View className="flex-row items-center justify-between mb-2">
           <TouchableOpacity className="p-1" onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={28} color="black" />
+            <ArrowIcon name="arrow-back" size={36} color="black" />
           </TouchableOpacity>
           <View className="absolute left-0 right-0 items-center z-0">
             <Logo width={130} height={20} />
           </View>
           <View className="flex-row space-x-2">
             <TouchableOpacity className="p-1">
-              <NoticeIcon width={28} height={28} />
+              <NoticeIcon size={36} />
             </TouchableOpacity>
             <TouchableOpacity className="p-1">
-              <ProfileIcon width={28} height={28} />
+              <ProfileIcon size={36} />
             </TouchableOpacity>
           </View>
         </View>
       </View>
 
       {/* Контент */}
-      <View className="px-4 pt-6 pb-24">
-        <Text className="text-sm text-gray-500 mb-1">Название работы</Text>
-        <Text className="text-lg font-semibold mb-4">{project.title}</Text>
+      <ScrollView className="px-4 pt-6 pb-24">
+      <Text className="text-sm text-gray-500 mb-1">Название работы</Text>
+        <View className="border border-gray-300 rounded-lg p-1">
+          <Text className="text-lg font-semibold mb-2 mt-2 ">{project.title}</Text>
+        </View>
 
         <Text className="text-sm text-gray-500 mb-1">Описание работы</Text>
-        <Text className="text-base text-gray-700 mb-4">{project.description}</Text>
+        <View className="border border-gray-300 rounded-lg p-1">
+          <Text className="text-base mb-2 mt-2">{project.description}</Text>
+        </View>
 
         <Text className="text-sm text-gray-500 mb-2">Объект ремонта сейчас</Text>
         <ScrollView horizontal className="mb-4">
@@ -103,7 +108,7 @@ export default function ProjectDetailScreen() {
             </View>
           ))}
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }

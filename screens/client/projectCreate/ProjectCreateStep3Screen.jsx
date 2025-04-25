@@ -10,6 +10,10 @@ import {
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { BACKEND_URL } from "../../../utils/config";
 import { useAuthStore } from "../../../store/authStore";
+import Logo from "../../../assets/logo.svg";
+import NoticeIcon from "../../../assets/Notice-icon.svg";
+import ProfileIcon from "../../../assets/Profile-icon.svg";
+import ArrowIcon from "../../../assets/Arrow-icon.svg";
 
 export default function CreateProjectStep3Screen() {
   const { params } = useRoute();
@@ -95,7 +99,27 @@ export default function CreateProjectStep3Screen() {
   
 
   return (
-    <ScrollView className="flex-1 bg-white px-4 pt-16" contentContainerStyle={{ paddingBottom: 100 }}>
+    <View className="flex-1 bg-white" contentContainerStyle={{ paddingBottom: 100 }}>
+
+      <View className="bg-yellow-300 px-4 pt-20 pb-4 rounded-b-3xl">
+        <View className="flex-row items-center justify-between mb-2">
+          <TouchableOpacity className="p-1 z-10" onPress={() => navigation.goBack()}>
+            <ArrowIcon size={36} />
+          </TouchableOpacity>
+          <View className="absolute left-0 right-0 items-center z-0">
+            <Logo width={130} height={20} />
+          </View>
+          <View className="flex-row space-x-2 z-10">
+            <TouchableOpacity className="p-1">
+              <NoticeIcon size={36} />
+            </TouchableOpacity>
+            <TouchableOpacity className="p-1">
+              <ProfileIcon size={36} />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+      <ScrollView className="px-4 pt-6">
       <Text className="text-2xl font-bold mb-4">Проверьте проект перед отправкой</Text>
 
       <Text className="text-sm text-gray-500 mb-1">Название</Text>
@@ -138,6 +162,7 @@ export default function CreateProjectStep3Screen() {
       <TouchableOpacity onPress={handleSubmit} className="bg-black mt-6 py-3 rounded-xl items-center">
         <Text className="text-white font-semibold text-base">Создать проект</Text>
       </TouchableOpacity>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }

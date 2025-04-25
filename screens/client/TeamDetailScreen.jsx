@@ -119,15 +119,17 @@ export default function TeamDetailScreen() {
             {team.shortDescription}
           </Text>
           <Text className="text-lg font-semibold mb-2">О команде</Text>
-          <Text className="text-sm text-gray-700 mb-6 leading-5">
+          <Text className="text-sm text-gray-700 mb-4 leading-5">
             {team.fullDescription}
           </Text>
+
+          <View className="h-[1px] bg-gray-200 my-6" />
 
           {/* Категории */}
           {team.categories?.length > 0 && (
             <>
               <Text className="text-lg font-semibold mb-2">Категории</Text>
-              <View className="flex-row flex-wrap gap-2 mb-6">
+              <View className="flex-row flex-wrap gap-2 mb-4">
                 {team.categories.map((tag, index) => (
                   <View key={index} className="bg-yellow-200 px-3 py-1 rounded-full">
                     <Text className="text-sm text-gray-800">{tag}</Text>
@@ -136,6 +138,8 @@ export default function TeamDetailScreen() {
               </View>
             </>
           )}
+
+          <View className="h-[1px] bg-gray-200 my-6" />
 
           {/* Контактная информация */}
           <Text className="text-lg font-semibold mb-2">Контактная информация</Text>

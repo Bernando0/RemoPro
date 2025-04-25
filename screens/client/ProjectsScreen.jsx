@@ -53,17 +53,17 @@ export default function ProjectsScreen() {
       <View className="bg-yellow-300 px-4 pt-20 pb-4 rounded-b-3xl">
         <View className="flex-row items-center justify-between mb-2">
           <TouchableOpacity className="p-1">
-            <ArrowIcon width={36} height={36} />
+            <ArrowIcon size={36} />
           </TouchableOpacity>
           <View className="absolute left-0 right-0 items-center z-0">
             <Logo width={130} height={20} />
           </View>
           <View className="flex-row space-x-2">
             <TouchableOpacity className="p-1">
-              <NoticeIcon width={36} height={36} />
+              <NoticeIcon size={36} />
             </TouchableOpacity>
             <TouchableOpacity className="p-1">
-              <ProfileIcon width={36} height={36} />
+              <ProfileIcon size={36} />
             </TouchableOpacity>
           </View>
         </View>
@@ -105,11 +105,11 @@ export default function ProjectsScreen() {
 
               {/* Троеточие */}
               <TouchableOpacity onPress={() => toggleOptions(project.id)}>
-                <Ionicons name="ellipsis-horizontal" size={20} color="#999" />
+                <Ionicons name="ellipsis-horizontal" size={25} color="#000" />
               </TouchableOpacity>
 
               {activeProjectId === project.id && (
-                <View className="absolute top-2 right-2 bg-white border border-gray-200 rounded-md shadow px-3 py-2 z-10">
+                <View className="absolute top-6 right-4 bg-white border border-gray-300 rounded-xl shadow-lg px-5 py-4 z-20 w-44">
                   <TouchableOpacity onPress={() => handleEdit(project.id)}>
                     <Text className="text-sm mb-2">Редактировать</Text>
                   </TouchableOpacity>
