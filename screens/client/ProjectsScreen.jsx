@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   Alert,
+  RefreshControl,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -23,16 +24,21 @@ export default function ProjectsScreen() {
 
   const [projects, setProjects] = useState([]);
   const [activeProjectId, setActiveProjectId] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
+  const fetchProjects = useCallback(() => {
+    setRefreshing(true);
     fetch(`${BACKEND_URL}/api/project/all`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
       .then(setProjects)
-      .catch((err) => console.error("Ошибка загрузки проектов", err));
+      .catch((err) => console.error("Ошибка загрузки проектов", err))
+      .finally(() => setRefreshing(false));
+  }, [token]);
+
+  useEffect(() => {
+    fetchProjects();
   }, []);
 
   const toggleOptions = (id) => {
@@ -82,6 +88,9 @@ export default function ProjectsScreen() {
       <ScrollView
         className="flex-1 px-4 pt-4"
         contentContainerStyle={{ paddingBottom: 60 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={fetchProjects} />
+        }
       >
         {projects.map((project) => (
           <TouchableOpacity
@@ -103,7 +112,6 @@ export default function ProjectsScreen() {
                 </Text>
               </View>
 
-              {/* Троеточие */}
               <TouchableOpacity onPress={() => toggleOptions(project.id)}>
                 <Ionicons name="ellipsis-horizontal" size={25} color="#000" />
               </TouchableOpacity>
@@ -120,17 +128,17 @@ export default function ProjectsScreen() {
               )}
             </View>
 
-            {/* Теги (категории) */}
             <View className="flex-row flex-wrap">
-              {project.tags.map((tag, i) => (
-                <View
-                  key={i}
-                  className="bg-yellow-200 px-2 py-1 rounded-full mr-2 mb-2"
-                >
-                  <Text className="text-xs text-black">{tag.category}</Text>
-                </View>
-              ))}
-            </View>
+  {project.tags.map((tag, i) => (
+    <View
+      key={i}
+      className="bg-yellow-200 px-2 py-1 rounded-full mr-2 mb-2"
+    >
+      <Text className="text-xs text-black">{tag.category?.action}</Text>
+    </View>
+  ))}
+</View>
+
           </TouchableOpacity>
         ))}
       </ScrollView>
