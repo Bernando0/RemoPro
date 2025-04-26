@@ -57,6 +57,17 @@ export default function TeamDetailScreen() {
 
   return (
     <View className="flex-1 bg-white">
+      {/* Фиксированные кнопки поверх всего */}
+      <View className="absolute top-20 left-4 right-4 z-10 flex-row justify-between items-center">
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <ArrowIcon />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Ionicons name="heart-outline" size={36} color="black" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Основной контент */}
       <ScrollView contentContainerStyle={{ paddingBottom: 60 }}>
         {/* Карусель изображений */}
         <View className="relative">
@@ -65,12 +76,8 @@ export default function TeamDetailScreen() {
             loop={false}
             showsPagination={true}
             paginationStyle={{ bottom: 6 }}
-            dot={
-              <View className="w-[6px] h-[6px] rounded-full mx-1 bg-white/40" />
-            }
-            activeDot={
-              <View className="w-[10px] h-[10px] rounded-full mx-1 bg-white" />
-            }
+            dot={<View className="w-[6px] h-[6px] rounded-full mx-1 bg-white/40" />}
+            activeDot={<View className="w-[10px] h-[10px] rounded-full mx-1 bg-white" />}
           >
             {(team.gallery || []).map((img, i) => (
               <TouchableOpacity
@@ -84,16 +91,6 @@ export default function TeamDetailScreen() {
               </TouchableOpacity>
             ))}
           </Swiper>
-
-          {/* Назад и лайк */}
-          <View className="absolute top-20 left-4 right-4 flex-row justify-between items-center">
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <ArrowIcon />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Ionicons name="heart-outline" size={36} color="white" />
-            </TouchableOpacity>
-          </View>
         </View>
 
         {/* Контент */}
@@ -108,13 +105,10 @@ export default function TeamDetailScreen() {
               className="w-16 h-16 rounded-md"
             />
             <View>
-              <Text className="text-lg font-semibold">{team.fullName}</Text>
-              <Text className="text-gray-500 text-sm">{team.account_name}</Text>
+              <Text className="text-black text-m">{team.account_name}</Text>
             </View>
           </View>
 
-          {/* О команде */}
-          
           <Text className="text-base text-black mb-2">
             {team.shortDescription}
           </Text>
@@ -141,7 +135,7 @@ export default function TeamDetailScreen() {
 
           <View className="h-[1px] bg-gray-200 my-6" />
 
-          {/* Контактная информация */}
+          {/* Контакты */}
           <Text className="text-lg font-semibold mb-2">Контактная информация</Text>
           <View className="space-y-2 mb-6">
             <View className="flex-row items-center">
@@ -154,8 +148,8 @@ export default function TeamDetailScreen() {
             </View>
           </View>
 
-          {/* Кнопка */}
-          <TouchableOpacity className="bg-white border border-black b py-3 rounded-xl mb-6">
+          {/* Кнопка отправки сообщения */}
+          <TouchableOpacity className="bg-white border border-black py-3 rounded-xl mb-6">
             <Text className="text-black text-center font-semibold text-base">
               Отправить сообщение
             </Text>
@@ -163,7 +157,7 @@ export default function TeamDetailScreen() {
         </View>
       </ScrollView>
 
-      {/* Просмотр фото в полноэкранном режиме */}
+      {/* Модалка просмотра изображений */}
       <ImageView
         images={modalImages}
         imageIndex={modalIndex}
