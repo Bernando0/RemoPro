@@ -18,6 +18,7 @@ import ProfileIcon from "../../assets/Profile-icon.svg";
 import ArrowIcon from "../../assets/Arrow-icon.svg";
 import { useAuthStore } from "../../store/authStore";
 
+
 export default function ProjectDetailScreen() {
   const { params } = useRoute();
   const navigation = useNavigation();

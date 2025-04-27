@@ -12,8 +12,11 @@ import NoticeIcon from "../../assets/Notice-icon.svg";
 import ProfileIcon from "../../assets/Profile-icon.svg";
 import ArrowIcon from "../../assets/Arrow-icon.svg";
 import { contractorProjects, contractorRequests } from "../../mock/contractorMockData";
+import { useNavigation } from '@react-navigation/native';
 
 export default function ContractorProjectsScreen() {
+
+  const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState("projects");
 
   const renderTab = (label, value) => (

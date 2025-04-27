@@ -5,8 +5,11 @@ import Logo from "../../assets/logo.svg";
 import ProfileIcon from "../../assets/Profile-icon.svg";
 import ArrowIcon from "../../assets/Arrow-icon.svg";
 import { notifications } from "../../mock/notificationsMock";
+import { useNavigation } from '@react-navigation/native';
 
 export default function NotificationScreen() {
+  const navigation = useNavigation();
+
   return (
     <View className="flex-1 bg-white">
       {/* Header */}
