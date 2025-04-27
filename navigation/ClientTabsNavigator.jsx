@@ -16,9 +16,9 @@ import { Ionicons, FontAwesome5, Feather } from '@expo/vector-icons';
 const Tab = createBottomTabNavigator();
 
 const CustomTabBar = ({ state, descriptors, navigation }) => {
-    return (
-      <View style={styles.tabBarWrapper}>
-        <View style={styles.tabBar}>
+  return (
+    <View testID="client-tabs" style={styles.tabBarWrapper}>
+      <View style={styles.tabBar}>
           {state.routes.map((route, index) => {
             const isFocused = state.index === index;
   

@@ -121,20 +121,21 @@ export default function ContractorProfileScreen() {
         </View>
 
         <Text className="text-xs text-gray-400 mb-1">Категории работ</Text>
-        <View className="flex-row flex-wrap mb-4">
-          {profile.tags.length > 0 ? (
-            profile.tags.map((cat, idx) => (
-              <View
-                key={idx}
-                className="bg-black px-4 py-2 rounded-full mr-2 mb-2"
-              >
-                <Text className="text-white text-sm font-medium">{cat}</Text>
-              </View>
-            ))
-          ) : (
-            <Text className="text-gray-400 text-sm">Категории не указаны</Text>
-          )}
-        </View>
+<View className="flex-row flex-wrap mb-4">
+  {profile.tags.length > 0 ? (
+    profile.tags.map((cat, idx) => (
+      <View
+        key={cat.id || idx}
+        className="bg-black px-4 py-2 rounded-full mr-2 mb-2"
+      >
+        <Text className="text-white text-sm font-medium">{cat.action}</Text>
+      </View>
+    ))
+  ) : (
+    <Text className="text-gray-400 text-sm">Категории не указаны</Text>
+  )}
+</View>
+
 
         <Text className="text-xs text-gray-400 mb-1">Галерея</Text>
         {profile.gallery.length > 0 ? (

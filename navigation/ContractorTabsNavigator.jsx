@@ -18,7 +18,7 @@ const Tab = createBottomTabNavigator();
 
 const CustomTabBar = ({ state, navigation }) => {
   return (
-    <View style={styles.tabBarWrapper}>
+    <View testID="contractor-tabs" style={styles.tabBarWrapper}>
       <View style={styles.tabBar}>
         {state.routes.map((route, index) => {
           const isFocused = state.index === index;

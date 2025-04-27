@@ -30,6 +30,7 @@ export default function ProjectDetailScreen() {
   const [tab, setTab] = useState("description");
   const [contractors, setContractors] = useState([]);
   const [contractorLoading, setContractorLoading] = useState(false);
+  const [confirmModal, setConfirmModal] = useState(false);
 
   const [requests, setRequests] = useState([]);
   const [requestsLoading, setRequestsLoading] = useState(false);
@@ -40,7 +41,7 @@ export default function ProjectDetailScreen() {
         setRequestsLoading(true);
         try {
           const res = await fetch(
-            `${BACKEND_URL}/api/project-contractor/all?ptId=${activeTag.category.categoryId}`,
+            `${BACKEND_URL}/api/project-contractor/get/action?ptId=${activeTag.projectTagId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -48,7 +49,14 @@ export default function ProjectDetailScreen() {
             }
           );
           const data = await res.json();
-          console.log("Ответ от сервера по заявкам:", data); // 👈 Вот тут логируем ответ
+          // console.log("Ответ от сервера по заявкам:", data);  
+    
+          // Печать данных для проверки
+          if (Array.isArray(data)) {
+            data.forEach(item => {
+              // console.log(item);
+            });
+          }
           setRequests(data);
         } catch (error) {
           console.error("Ошибка загрузки заявок:", error);
@@ -57,9 +65,48 @@ export default function ProjectDetailScreen() {
         }
       }
     };
+    
 
     fetchRequests();
   }, [activeTag, tab]);
+
+  const updateContractorStatus = (tagId, status) => {
+    setProject((prevProject) => {
+      const updatedTags = prevProject.tags.map((tag) =>
+        tag.projectTagId === tagId ? { ...tag, hasContractor: status } : tag
+      );
+      return { ...prevProject, tags: updatedTags };
+    });
+  };
+  
+
+  // Функция подтверждения подрядчика
+  const approveContractor = async () => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/project-contractor/approve-contractor?ptcId=${activeTag.contractor.id}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.ok) {
+        Alert.alert("Успешно", "Подрядчик утвержден!");
+        
+        // Обновляем проект с новым статусом
+        const updatedProject = await fetch(`${BACKEND_URL}/api/project/${projectId}`).then((res) => res.json());
+setProject(updatedProject);  // Обновляем состояние проекта
+ // Обновляем проект
+
+        // Закрываем модалку
+        setConfirmModal(false);
+      } else {
+        Alert.alert("Ошибка", "Не удалось подтвердить подрядчика.");
+      }
+    } catch (err) {
+      console.error("Ошибка утверждения подрядчика:", err);
+      Alert.alert("Ошибка сети", "Не удалось подтвердить подрядчика.");
+    }
+  };
+
 
   const statusName = (status) => {
     switch (status) {
@@ -81,23 +128,29 @@ export default function ProjectDetailScreen() {
   };
 
   useEffect(() => {
-    fetch(`${BACKEND_URL}/api/project/${projectId}`)
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchProject = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/project/${projectId}`);
+        const data = await res.json();
+        // console.log(data);
+        
         setProject(data);
         setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Ошибка загрузки проекта:", err);
         setLoading(false);
-      });
+      }
+    };
+
+    fetchProject();
   }, [projectId]);
+
 
   useEffect(() => {
     const fetchContractors = async () => {
       if (activeTag && activeTag.mode === "contractors" && tab === "search") {
         setContractorLoading(true);
-        let url = `${BACKEND_URL}/api/contractor/filter?categoryIds=${activeTag.category.categoryId}`;
+        let url = `${BACKEND_URL}/api/contractor/filter?projectTagIds=${activeTag.projectTagId}`; // Здесь тоже нужно использовать projectTagId
 
         try {
           const res = await fetch(url, {
@@ -117,7 +170,6 @@ export default function ProjectDetailScreen() {
 
     fetchContractors();
   }, [activeTag, tab]);
-
   if (loading || !project) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
@@ -226,7 +278,61 @@ export default function ProjectDetailScreen() {
       </View>
       </ScrollView>
 
-      {/* Modal */}
+      {activeTag?.hasContractor ? (
+ <Modal visible={!!activeTag} transparent animationType="fade">
+ <View className="flex-1 bg-black/30 justify-center items-center px-4">
+   <View className="bg-white rounded-2xl w-full max-h-[80%] p-6">
+     <View className="flex-row justify-between items-center mb-4">
+       <Text className="text-lg font-semibold">
+         Подрядчик: {activeTag.contractor.userId.accountName}
+       </Text>
+       <TouchableOpacity onPress={() => setActiveTag(null)}>
+         <Ionicons name="close" size={22} color="black" />
+       </TouchableOpacity>
+     </View>
+
+     <View className="flex-row mb-4">
+       <Image
+         source={{
+           uri: `${BACKEND_URL}${activeTag.contractor.profileImg || IconTeam}`,
+         }}
+         className="w-28 h-28 rounded-md mr-4"
+       />
+       <View>
+         <Text className="text-sm text-gray-500 mb-2">Описание</Text>
+         <Text className="text-base text-black mb-4">
+           {activeTag.contractor.fullDescription || "Нет описания"}
+         </Text>
+
+         <Text className="text-sm text-gray-500 mb-2">Контакт</Text>
+         <Text className="text-base text-black">{activeTag.contractor.userId.phone}</Text>
+       </View>
+     </View>
+
+     {/* Кнопка для перехода на карточку подрядчика */}
+     <TouchableOpacity
+       onPress={() => {
+         navigation.navigate("TeamDetail", { teamId: activeTag.contractor.id });
+       }}
+       className="mt-4 py-3 bg-gray-200 rounded-full items-center"
+     >
+       <Text className="text-black text-sm font-semibold">Перейти к подробной информации</Text>
+     </TouchableOpacity>
+
+     {/* Кнопка для отправки сообщения */}
+     <TouchableOpacity
+       onPress={() => {
+         // Здесь добавьте логику для отправки сообщения
+         console.log("Сообщение отправлено!");
+       }}
+       className="mt-4 py-3 bg-black rounded-full items-center"
+     >
+       <Text className="text-white text-sm font-semibold">Отправить сообщение</Text>
+     </TouchableOpacity>
+   </View>
+ </View>
+</Modal>
+) : (
       <Modal visible={!!activeTag} transparent>
         <View className="flex-1 bg-black/30 justify-center items-center px-4">
           <View className="bg-white rounded-2xl w-full max-h-[80%] p-4">
@@ -358,7 +464,7 @@ export default function ProjectDetailScreen() {
                               onPress={async () => {
                                 try {
                                   const res = await fetch(
-                                    `${BACKEND_URL}/api/project-contractor/invite?projectId=${activeTag.category.categoryId}&contractorId=${team.id}`,
+                                    `${BACKEND_URL}/api/project-contractor/invite?projectId=${activeTag.projectTagId}&contractorId=${team.id}`,
                                     {
                                       method: "POST",
                                       headers: {
@@ -392,99 +498,141 @@ export default function ProjectDetailScreen() {
                   </ScrollView>
                 )}
 
-                {tab === "requests" && (
-                  <ScrollView className="space-y-6">
-                    {requestsLoading ? (
-                      <ActivityIndicator
-                        className="mt-4"
-                        size="small"
-                        color="black"
-                      />
-                    ) : requests.length === 0 ? (
-                      <View className="flex-1 justify-center items-center mt-8">
-                        <Text className="text-gray-400">Нет заявок</Text>
-                      </View>
-                    ) : (
-                      Object.entries(
-                        requests.reduce((acc, req) => {
-                          if (!acc[req.status]) acc[req.status] = [];
-                          acc[req.status].push(req);
-                          return acc;
-                        }, {})
-                      ).map(([status, items]) => (
-                        <View key={status}>
-                          <Text className="text-base font-bold text-black mb-2">
-                            {statusName(status)}
-                          </Text>
-                          <ScrollView
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            className="mb-6"
-                          >
-                            {items.map((req) => {
-                              const hasImage = req.profileImg || req.firstImage;
-                              const imageUri = hasImage
-                                ? `${BACKEND_URL}${
-                                    req.profileImg || req.firstImage
-                                  }`
-                                : null;
-                              return (
-                                <View
-                                  key={req.ptcId}
-                                  className="w-48 bg-yellow-50 rounded-xl mr-4 p-3"
-                                >
-                                  <TouchableOpacity
-                                    className="relative w-full h-28 justify-center items-center"
-                                    onPress={() => {
-                                      setActiveTag(null);
-                                      navigation.navigate("TeamDetail", {
-                                        teamId: req.contractorId,
-                                      });
-                                    }}
-                                  >
-                                    {imageUri ? (
-                                      <Image
-                                        source={{ uri: imageUri }}
-                                        className="w-full h-28 rounded-md"
-                                      />
-                                    ) : (
-                                      <View className="w-full h-28 bg-gray-200 justify-center items-center rounded-md">
-                                        <Image
-                                          source={IconTeam}
-                                          className="w-12 h-12 opacity-50"
-                                        />
-                                      </View>
-                                    )}
-                                  </TouchableOpacity>
+{tab === "requests" && (
+  <ScrollView className="space-y-6">
+    {requestsLoading ? (
+      <ActivityIndicator className="mt-4" size="small" color="black" />
+    ) : requests.length === 0 ? (
+      <View className="flex-1 justify-center items-center mt-8">
+        <Text className="text-gray-400">Нет заявок</Text>
+      </View>
+    ) : (
+      Object.entries(
+        requests.reduce((acc, req) => {
+          // Группируем заявки по статусам
+          if (!acc[req.status]) acc[req.status] = [];
+          acc[req.status].push(req);
+          return acc;
+        }, {})
+      ).map(([status, items]) => (
+        <View key={status}>
+          <Text className="text-base font-bold text-black mb-2">
+            {statusName(status)} {/* Подписываем статус */}
+          </Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {items.map((req) => {
+              const hasImage = req.contractor?.profileImg || req.contractor?.firstImage;
+              const imageUri = hasImage
+                ? `${BACKEND_URL}${req.contractor?.profileImg || req.contractor?.firstImage}`
+                : null;
 
-                                  <View className="pt-2">
-                                    <Text
-                                      className="font-semibold text-sm"
-                                      numberOfLines={2}
-                                    >
-                                      {req.accountName || "Без имени"}
-                                    </Text>
-                                    <Text
-                                      className="text-xs text-gray-400 mt-1"
-                                      numberOfLines={1}
-                                    >
-                                      {req.shortDescription || "Без проекта"}
-                                    </Text>
-                                  </View>
-                                </View>
-                              );
-                            })}
-                          </ScrollView>
-                        </View>
-                      ))
+              return (
+                <View key={req.id} className="w-48 bg-yellow-50 rounded-xl mr-4 p-3">
+                  <TouchableOpacity
+                    className="relative w-full h-28 justify-center items-center"
+                    onPress={() => {
+                      setActiveTag(null);
+                      navigation.navigate("TeamDetail", {
+                        teamId: req.contractor.id,
+                      });
+                    }}
+                  >
+                    {imageUri ? (
+                      <Image source={{ uri: imageUri }} className="w-full h-28 rounded-md" />
+                    ) : (
+                      <View className="w-full h-28 bg-gray-200 justify-center items-center rounded-md">
+                        <Image source={IconTeam} className="w-12 h-12 opacity-50" />
+                      </View>
                     )}
-                  </ScrollView>
-                )}
+                  </TouchableOpacity>
+
+                  <View className="pt-2">
+                    <Text className="font-semibold text-sm" numberOfLines={2}>
+                      {req.contractor.userId.accountName || "Без имени"}
+                    </Text>
+                    <Text className="text-xs text-gray-400 mt-1" numberOfLines={1}>
+                      {req.contractor.shortDescription || "Без описания"}
+                    </Text>
+                  </View>
+
+                  {/* Кнопка подтверждения, если статус "WAITING_USER" */}
+                  {req.status === "WAITING_USER" && (
+                    <TouchableOpacity
+                      onPress={async () => {
+                        try {
+                          const res = await fetch(
+                            `${BACKEND_URL}/api/project-contractor/approve-contractor?ptcId=${req.id}`,
+                            {
+                              method: "POST",
+                              headers: {
+                                Authorization: `Bearer ${token}`,
+                              },
+                            }
+                          );
+                          if (res.ok) {
+                            alert("Заявка успешно подтверждена!");
+                            // Обновление состояния или перезагрузка данных
+                            setRequestsLoading(true);
+                            fetchRequests(); // Обновление данных заявок
+                          } else {
+                            alert("Ошибка при подтверждении заявки.");
+                          }
+                        } catch (error) {
+                          console.error("Ошибка при подтверждении заявки:", error);
+                          alert("Ошибка сети при подтверждении заявки.");
+                        }
+                      }}
+                      className="mt-2 py-2 bg-green-500 rounded-full items-center"
+                    >
+                      <Text className="text-white text-sm font-semibold">Подтвердить</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              );
+            })}
+          </ScrollView>
+        </View>
+      ))
+    )}
+  </ScrollView>
+)}
+
+
               </>
             )}
           </View>
         </View>
       </Modal>
+)}
+
+      // Модалка подтверждения подрядчика
+<Modal visible={confirmModal} transparent animationType="fade">
+  <View className="flex-1 bg-black/30 justify-center items-center px-8">
+    <View className="bg-white rounded-xl p-6 w-full">
+      <Text className="text-lg font-semibold text-center mb-6">
+        Подтвердите подрядчика
+      </Text>
+      <Text className="text-center mb-6">
+        Вы хотите подтвердить подрядчика {activeTag?.category?.action}?
+      </Text>
+      <View className="flex-row space-x-4">
+        <TouchableOpacity
+          className="flex-1 py-3 bg-gray-300 rounded-xl items-center"
+          onPress={() => setConfirmModal(false)}
+        >
+          <Text className="text-black">Отмена</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="flex-1 py-3 bg-black rounded-xl items-center"
+          onPress={approveContractor}
+        >
+          <Text className="text-white">Подтвердить</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+</Modal>
+
     </View>
   );
 }

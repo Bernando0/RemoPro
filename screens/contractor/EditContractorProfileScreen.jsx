@@ -30,19 +30,6 @@ export default function EditContractorProfileScreen() {
   const [allServerCategories, setAllServerCategories] = useState([]);
 
 
-  const allCategories = [
-    "Электрика",
-    "Сантехника",
-    "Отделка",
-    "Демонтаж",
-    "Плитка",
-    "Покраска",
-    "Стяжка пола",
-    "Гипсокартон",
-    "Двери и окна",
-    "Обои",
-  ];
-
   const filteredCategories = searchText
   ? allServerCategories.filter((cat) =>
       cat.action.toLowerCase().includes(searchText.toLowerCase())
@@ -73,12 +60,8 @@ export default function EditContractorProfileScreen() {
         setShortDesc(infoData.shortDescription || "");
         setFullDesc(infoData.fullDescription || "");
   
-        const matchedTags = infoData.tags?.map(tag => {
-          const matched = categoriesData.find(c => c.id === tag.workCategory.id);
-          return matched?.action || null;
-        }).filter(Boolean) || [];
-  
-        setCategories(matchedTags);
+        setCategories(infoData.tags || []);
+
   
         const galleryImages = infoData.gallery?.map((img) => ({
           id: img.id,
@@ -203,11 +186,10 @@ const removeLogo = () => {
         });
       }
 
-      const tags = allServerCategories
-  .filter((cat) => categories.includes(cat.action))
-  .map((cat) => ({ workCategory: { id: cat.id } }));
-
-
+      const tags = categories.map((cat) => ({
+        workCategory: { id: cat.id }
+      }));
+      
       const res = await fetch(`${BACKEND_URL}/api/contractor/update-info`, {
         method: "POST",
         headers: {
@@ -222,6 +204,7 @@ const removeLogo = () => {
           tags,
         }),
       });
+      
 
       if (!res.ok) throw new Error("Ошибка обновления");
 
@@ -331,19 +314,20 @@ const removeLogo = () => {
       {/* Категории */}
       <Text className="text-xs text-gray-400 mb-2">Категории работ</Text>
       <View className="flex-row flex-wrap mb-4">
-        {categories.map((cat, idx) => (
-          <View
-            key={idx}
-            className="bg-black px-3 py-1 rounded-full mr-2 mb-2 flex-row items-center"
-          >
-            <Text className="text-white text-sm mr-2">{cat}</Text>
-            <TouchableOpacity onPress={() =>
-              setCategories(categories.filter((_, i) => i !== idx))
-            }>
-              <Ionicons name="close" size={14} color="white" />
-            </TouchableOpacity>
-          </View>
-        ))}
+      {categories.map((cat, idx) => (
+  <View
+    key={cat.id || idx}
+    className="bg-black px-3 py-1 rounded-full mr-2 mb-2 flex-row items-center"
+  >
+    <Text className="text-white text-sm mr-2">{cat.action}</Text>
+    <TouchableOpacity
+      onPress={() => setCategories(categories.filter((_, i) => i !== idx))}
+    >
+      <Ionicons name="close" size={14} color="white" />
+    </TouchableOpacity>
+  </View>
+))}
+
       </View>
       <TouchableOpacity
         onPress={() => setCategoryModalVisible(true)}
@@ -385,8 +369,8 @@ const removeLogo = () => {
   <TouchableOpacity
     key={cat.id}
     onPress={() => {
-      if (!categories.includes(cat.action)) {
-        setCategories([...categories, cat.action]);
+      if (!categories.some((c) => c.id === cat.id)) {
+        setCategories([...categories, cat]);
       }
     }}
     className="bg-black px-3 py-1 rounded-full mr-2 mb-2"
@@ -394,6 +378,7 @@ const removeLogo = () => {
     <Text className="text-white text-sm">{cat.action}</Text>
   </TouchableOpacity>
 ))}
+
 
               </View>
             </ScrollView>
