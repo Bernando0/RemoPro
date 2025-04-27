@@ -110,10 +110,10 @@ export default function CreateProjectStep3Screen() {
             <Logo width={130} height={20} />
           </View>
           <View className="flex-row space-x-2 z-10">
-            <TouchableOpacity className="p-1">
+            <TouchableOpacity className="p-1" onPress={() => navigation.navigate("ClientNotification")}>
               <NoticeIcon size={36} />
             </TouchableOpacity>
-            <TouchableOpacity className="p-1">
+            <TouchableOpacity className="p-1" onPress={() => navigation.navigate("UserProfile")}>
               <ProfileIcon size={36} />
             </TouchableOpacity>
           </View>

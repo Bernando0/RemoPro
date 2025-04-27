@@ -87,7 +87,7 @@ export default function TeamsScreen() {
     <View className="flex-1 bg-white">
       <View className="bg-yellow-300 px-4 pt-20 pb-4 rounded-b-3xl">
         <View className="flex-row items-center justify-between mb-2">
-          <TouchableOpacity className="p-1">
+          <TouchableOpacity className="p-1" onPress={() => navigation.goBack()}>
             <ArrowIcon name="arrow-back" size={36} />
           </TouchableOpacity>
 
@@ -102,10 +102,10 @@ export default function TeamsScreen() {
           </View>
 
           <View className="flex-row space-x-2">
-            <TouchableOpacity className="p-1">
+            <TouchableOpacity className="p-1" onPress={() => navigation.navigate("ClientNotification")}>
               <NoticeIcon size={36} />
             </TouchableOpacity>
-            <TouchableOpacity className="p-1">
+            <TouchableOpacity className="p-1" onPress={() => navigation.navigate("UserProfile")}>
               <ProfileIcon size={36} />
             </TouchableOpacity>
           </View>

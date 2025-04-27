@@ -91,10 +91,10 @@ export default function OrdersScreen() {
             />
           </View>
           <View className="flex-row space-x-2">
-            <TouchableOpacity className="p-1">
+            <TouchableOpacity className="p-1" onPress={() => navigation.navigate("ContractorNotification")}>
               <NoticeIcon width={36} height={36} />
             </TouchableOpacity>
-            <TouchableOpacity className="p-1">
+            <TouchableOpacity className="p-1" onPress={() => navigation.navigate("ContractorProfile")}>
               <ProfileIcon width={36} height={36} />
             </TouchableOpacity>
           </View>

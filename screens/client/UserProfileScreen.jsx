@@ -124,13 +124,13 @@ export default function UserProfileScreen() {
     <View className="flex-1 bg-white">
       <View className="bg-yellow-300 px-4 pt-20 pb-4 rounded-b-3xl">
         <View className="flex-row items-center justify-between mb-2">
-          <TouchableOpacity className="p-1">
+          <TouchableOpacity className="p-1" onPress={() => navigation.goBack()}>
             <ArrowIcon />
           </TouchableOpacity>
           <View className="absolute left-0 right-0 items-center z-0">
             <Logo width={130} height={20} />
           </View>
-          <TouchableOpacity className="p-1">
+          <TouchableOpacity className="p-1" onPress={() => navigation.navigate("ClientNotification")}>
             <NoticeIcon />
           </TouchableOpacity>
         </View>

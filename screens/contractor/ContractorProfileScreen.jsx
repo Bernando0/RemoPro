@@ -65,7 +65,7 @@ export default function ContractorProfileScreen() {
           <View className="absolute left-0 right-0 items-center z-0">
             <Logo width={130} height={20} />
           </View>
-          <TouchableOpacity className="p-1">
+          <TouchableOpacity className="p-1" onPress={() => navigation.navigate("ContractorNotification")}>
             <NoticeIcon />
           </TouchableOpacity>
         </View>

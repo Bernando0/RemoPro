@@ -2,6 +2,8 @@ import React from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Logo from "../../assets/logo.svg";
+import ProfileIcon from "../../assets/Profile-icon.svg";
+import ArrowIcon from "../../assets/Arrow-icon.svg";
 import { notifications } from "../../mock/notificationsMock";
 
 export default function NotificationScreen() {
@@ -10,14 +12,14 @@ export default function NotificationScreen() {
       {/* Header */}
       <View className="bg-yellow-300 px-4 pt-20 pb-4 rounded-b-3xl">
         <View className="flex-row items-center justify-between mb-2">
-          <TouchableOpacity className="p-1">
-            <Ionicons name="arrow-back" size={36} />
+          <TouchableOpacity className="p-1" onPress={() => navigation.goBack()}>
+            <ArrowIcon name="arrow-back" width={36} height={36} />
           </TouchableOpacity>
           <View className="absolute left-0 right-0 items-center z-0">
             <Logo width={130} height={20} />
           </View>
-          <TouchableOpacity className="p-1">
-            <Ionicons name="person-circle-outline" size={36} />
+          <TouchableOpacity className="p-1" onPress={() => navigation.navigate("ContractorProfile")}>
+            <ProfileIcon name="person-circle-outline" width={36} height={36} />
           </TouchableOpacity>
         </View>
       </View>
