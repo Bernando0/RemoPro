@@ -89,7 +89,7 @@ export default function CreateProjectStep3Screen() {
       if (!response.ok) throw new Error(text || "Произошла ошибка при создании проекта");
   
       Alert.alert("Успешно", "Проект создан!");
-      navigation.goBack();
+      navigation.navigate("Project")
     } catch (err) {
       console.error("❌ Ошибка:", err);
       Alert.alert("Ошибка", err.message);
@@ -150,11 +150,12 @@ export default function CreateProjectStep3Screen() {
             {categoryDescriptions[id] || "Без описания"}
           </Text>
           <View className="flex-row flex-wrap">
-            {(categoryMaterials[id] || []).map((matId) => (
-              <View key={matId} className="bg-yellow-200 px-3 py-1 rounded-full mr-2 mt-2">
-                <Text className="text-sm text-gray-800">Материал ID: {matId}</Text>
-              </View>
-            ))}
+          {(categoryMaterials[id] || []).map((materialText, index) => (
+  <View key={index} className="bg-yellow-200 px-3 py-1 rounded-full mr-2 mt-2">
+    <Text className="text-sm text-gray-800">{materialText}</Text>
+  </View>
+))}
+
           </View>
         </View>
       ))}

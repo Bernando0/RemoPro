@@ -73,6 +73,18 @@ export default function CreateProjectStep2Screen() {
     if (currentIndex < selectedCategoryIds.length - 1) {
       setCurrentIndex((i) => i + 1);
     } else {
+      // Подготовка материалов: сохранить текст, а не только ID
+      const preparedMaterials = {};
+  
+      selectedCategoryIds.forEach((categoryId) => {
+        const materialsForCategory = categoryMaterials[categoryId] || [];
+        const materialsTextArray = materialsForCategory.map((materialId) => {
+          const mat = categoryData.materials.find((m) => m.id === materialId);
+          return mat ? mat.material : `Материал ID: ${materialId}`;
+        });
+        preparedMaterials[categoryId] = materialsTextArray;
+      });
+  
       navigation.navigate("CreateProjectStep3", {
         title,
         description,
@@ -80,10 +92,12 @@ export default function CreateProjectStep2Screen() {
         refImages,
         selectedCategoryIds,
         categoryDescriptions,
-        categoryMaterials,
+        categoryMaterials: preparedMaterials, // 🛠 теперь здесь текстовые материалы
+        categories: [categoryData], // передай также для поиска действия категории (если нужно)
       });
     }
   };
+  
 
   if (loading || !categoryData) {
     return (

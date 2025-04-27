@@ -58,20 +58,24 @@ export default function ProjectsScreen() {
       {/* Хедер */}
       <View className="bg-yellow-300 px-4 pt-20 pb-4 rounded-b-3xl">
         <View className="flex-row items-center justify-between mb-2">
-          <TouchableOpacity className="p-1" onPress={() => navigation.goBack()}>
+          <TouchableOpacity className="p-1" onPress={() => navigation.navigate("Home")}>
             <ArrowIcon size={36} />
           </TouchableOpacity>
           <View className="absolute left-0 right-0 items-center z-0">
             <Logo width={130} height={20} />
           </View>
-          <View className="flex-row space-x-2">
-            <TouchableOpacity className="p-1" onPress={() => navigation.navigate("ClientNotification")}>
-              <NoticeIcon size={36} />
-            </TouchableOpacity>
-            <TouchableOpacity className="p-1" onPress={() => navigation.navigate("UserProfile")}>
-              <ProfileIcon size={36} />
-            </TouchableOpacity>
-          </View>
+           <View className="flex-row space-x-2">
+                      <TouchableOpacity className="p-1"
+                      onPress={() => navigation.navigate("ClientNotification")}>
+                        
+                        <NoticeIcon name="notifications-outline" size={36} />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        className="p-1"
+                        onPress={() => navigation.navigate("UserProfile")}>
+                        <ProfileIcon name="person-circle-outline" size={36} />
+                      </TouchableOpacity>
+                    </View>
         </View>
 
         <TouchableOpacity

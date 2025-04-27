@@ -31,21 +31,36 @@ export default function ProjectDetailScreen() {
   const [activeTag, setActiveTag] = useState(null);
   const [confirmModal, setConfirmModal] = useState(false);
   const [pendingTagId, setPendingTagId] = useState(null);
+  const [selectedActionStatus, setSelectedActionStatus] = useState(null);
+  const [pendingActionId, setPendingActionId] = useState(null);
+
+
 
   useEffect(() => {
     async function fetchData() {
       try {
+        console.log("Запрашиваю данные проекта и действия по категориям...");
+  
         const [projRes, actionsRes] = await Promise.all([
           fetch(`${BACKEND_URL}/api/project/${projectId}`),
-          fetch(`${BACKEND_URL}/api/project-contractor/get/my/action?pId=${projectId}`, {
+          fetch(`${BACKEND_URL}/api/project-contractor/get/contractor/project/action?pId=${projectId}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
-
+  
+        console.log("Ответ проекта:", projRes.status, projRes.ok);
+        console.log("Ответ действий:", actionsRes.status, actionsRes.ok);
+  
+        if (!projRes.ok || !actionsRes.ok) {
+          throw new Error("Ошибка при запросе данных");
+        }
+  
         const projectData = await projRes.json();
         const actionsData = await actionsRes.json();
-        console.log("Fetched actions data:", actionsData);
-
+  
+        console.log("Данные проекта:", projectData);
+        console.log("Действия по категориям:", actionsData);
+  
         setProject(projectData);
         setMyActions(actionsData);
       } catch (err) {
@@ -54,39 +69,66 @@ export default function ProjectDetailScreen() {
         setLoading(false);
       }
     }
-
+  
     fetchData();
   }, [projectId]);
+  
+  
 
   const getActionForCategory = (catId) => {
-    return myActions.find((action) => action.projectTag.category.id === catId);
+    return myActions.find(action => action.projectTag?.category?.id === catId) || null;
   };
+  
 
-  const sendRequest = async (projectTagId) => {
+
+  const sendRequest = async (projectTagId, actionStatus) => {
     try {
-      const res = await fetch(`${BACKEND_URL}/api/project-contractor/bid?projectTagId=${projectTagId}`, {
+      let url = "";
+      let successMessage = "";
+  
+      if (actionStatus === "INVITE") {
+        url = `${BACKEND_URL}/api/project-contractor/approve-invite?ptcId=${pendingActionId}`;
+        successMessage = "Запрос успешно подтверждён!";
+        console.log("Отправляю запрос APPROVE-INVITE:", url);
+      } else {
+        url = `${BACKEND_URL}/api/project-contractor/bid?projectTagId=${projectTagId}`;
+        successMessage = "Заявка успешно отправлена!";
+        console.log("Отправляю запрос BID:", url);
+      }
+  
+      const res = await fetch(url, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
-
+  
+      console.log("Ответ на запрос:", res.status, res.ok);
+  
       if (res.ok) {
-        Alert.alert("Успешно", "Заявка отправлена!");
-
-        const updatedActionsRes = await fetch(`${BACKEND_URL}/api/project-contractor/get/my/action?pId=${projectId}`, {
+        console.log("Успех! Теперь перезагружаю действия...");
+        const updatedActionsRes = await fetch(`${BACKEND_URL}/api/project-contractor/get/contractor/project/action?pId=${projectId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+  
+        console.log("Ответ на загрузку обновленных действий:", updatedActionsRes.status, updatedActionsRes.ok);
+  
         const updatedActions = await updatedActionsRes.json();
+        console.log("Данные после подтверждения:", JSON.stringify(updatedActions, null, 2));
+  
         setMyActions(updatedActions);
+        Alert.alert("Успешно", successMessage);
       } else {
-        Alert.alert("Ошибка", "Не удалось отправить заявку.");
+        console.error("Ошибка при отправке запроса:", res.status);
+        Alert.alert("Ошибка", "Не удалось выполнить действие.");
       }
     } catch (err) {
-      console.error("Ошибка отправки заявки:", err);
-      Alert.alert("Ошибка сети", "Не удалось отправить заявку.");
+      console.error("Ошибка при отправке запроса:", err);
+      Alert.alert("Ошибка сети", "Не удалось выполнить действие.");
     } finally {
       setConfirmModal(false);
     }
   };
+  
+  
 
   if (loading || !project) {
     return (
@@ -121,10 +163,15 @@ export default function ProjectDetailScreen() {
       <ScrollView className="flex-1 pt-40 pb-24">
         <View className="px-4">
           <View className="flex-row items-center mb-6">
-            <Image
-              source={{ uri: `${BACKEND_URL}${project.client_img}` }}
-              className="w-12 h-12 rounded-full mr-3"
-            />
+          <Image
+  source={{
+    uri: activeTag?.contractor?.profileImg
+      ? `${BACKEND_URL}${activeTag.contractor.profileImg}`
+      : require("../../assets/Profile.png"), // Путь к дефолтной картинке
+  }}
+  className="w-28 h-28 rounded-md mr-4"
+/>
+
             <View>
               <Text className="text-sm font-semibold text-black">{project.client.accountName}</Text>
               <Text className="text-xs text-gray-500">Владелец проекта</Text>
@@ -161,23 +208,28 @@ export default function ProjectDetailScreen() {
 
           <Text className="text-sm text-gray-500 mb-2">Категории работ</Text>
           {project.tags.map((tag, idx) => {
-            const action = getActionForCategory(tag.category.categoryId);
-            let buttonText = "Отправить заявку";
-            let disabled = false;
-            let buttonStyle = "bg-black";
+  const action = getActionForCategory(tag.category.categoryId);
 
-            if (action) {
-              if (action.status === "INVITE") {
-                buttonText = "Ответить на запрос";
-              } else if (action.status === "WAITING_USER") {
-                buttonText = "Отправлена заявка";
-                buttonStyle = "bg-gray-300";
-                disabled = true;
-              }
-            }
+  let buttonText = "Отправить заявку";
+  let disabled = false;
+  let buttonStyle = "bg-black";
+
+  if (action) {
+    if (action.status === "INVITE") {
+      buttonText = "Ответить на запрос";
+    } else if (action.status === "WAITING_USER") {
+      buttonText = "Отправлена заявка";
+      buttonStyle = "bg-gray-300";
+      disabled = true;
+    } else if (action.status === "APPROVED") {
+      buttonText = "В работе";
+      buttonStyle = "bg-green-500";
+      disabled = true;
+    }
+  }
 
             return (
-              <View key={idx} className="p-4 bg-white rounded-xl border border-gray-200 mb-4">
+                <View key={idx} className="p-4 bg-white rounded-xl border border-gray-200 mb-4">
                 <View className="flex-row items-center justify-between mb-3">
                   <Text className="text-base font-semibold text-black">
                     {tag.category.action}
@@ -194,10 +246,15 @@ export default function ProjectDetailScreen() {
                       className={`py-2 px-4 rounded-full ${buttonStyle}`}
                       onPress={() => {
                         if (!disabled) {
-                          setPendingTagId(tag.projectTagId);
+                          setPendingTagId(action?.projectTag?.id); // Оставляем если нужно для BID
+                          setSelectedActionStatus(action?.status || null);
+                          setPendingActionId(action?.id); // Новый стейт для ID ProjectTagContractor
                           setConfirmModal(true);
                         }
                       }}
+                      
+                      
+                      
                     >
                       <Text className="text-sm text-white">{buttonText}</Text>
                     </TouchableOpacity>
@@ -223,7 +280,8 @@ export default function ProjectDetailScreen() {
               </TouchableOpacity>
               <TouchableOpacity
                 className="flex-1 py-3 bg-black rounded-xl items-center"
-                onPress={() => sendRequest(pendingTagId)}
+                onPress={() => sendRequest(pendingTagId, selectedActionStatus)}
+
               >
                 <Text className="text-white">Отправить</Text>
               </TouchableOpacity>
@@ -237,7 +295,8 @@ export default function ProjectDetailScreen() {
         <View className="flex-1 bg-black/30 justify-center items-center px-4">
           <View className="bg-white rounded-2xl w-full max-h-[80%] p-6">
             <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-lg font-semibold">{activeTag?.category.action}</Text>
+            <Text className="text-lg font-semibold">{activeTag?.category?.action || "Категория"}</Text>
+
               <TouchableOpacity onPress={() => setActiveTag(null)}>
                 <Ionicons name="close" size={24} color="black" />
               </TouchableOpacity>
