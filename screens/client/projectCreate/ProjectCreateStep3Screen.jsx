@@ -31,6 +31,19 @@ export default function CreateProjectStep3Screen() {
     categories = [],
   } = params;
 
+  const categoryMaterialsIds = selectedCategoryIds.reduce((acc, id) => {
+    const materials = categories.find((c) => c.id === id)?.materials || [];
+    const selectedTexts = categoryMaterials[id] || [];
+  
+    const selectedIds = materials
+      .filter((m) => selectedTexts.includes(m.material))
+      .map((m) => m.id);
+  
+    acc[id] = selectedIds;
+    return acc;
+  }, {});
+  
+
   const handleSubmit = async () => {
     const formData = new FormData();
   
@@ -38,29 +51,42 @@ export default function CreateProjectStep3Screen() {
     formData.append("description", description);
   
     if (sourceImages[0]) {
-        sourceImages.forEach((img, index) => {
-            formData.append("sourceImg", {
-              uri: img.uri,
-              name: img.fileName || `source_${index}.jpg`,
-              type: "image/jpeg",
-            });
-          });
+      sourceImages.forEach((img, index) => {
+        formData.append("sourceImg", {
+          uri: img.uri,
+          name: img.fileName || `source_${index}.jpg`,
+          type: "image/jpeg",
+        });
+      });
     }
   
     if (refImages[0]) {
-        refImages.forEach((img, index) => {
-            formData.append("refImg", {
-              uri: img.uri,
-              name: img.fileName || `ref_${index}.jpg`,
-              type: "image/jpeg",
-            });
-          });
+      refImages.forEach((img, index) => {
+        formData.append("refImg", {
+          uri: img.uri,
+          name: img.fileName || `ref_${index}.jpg`,
+          type: "image/jpeg",
+        });
+      });
     }
+  
+    // 👇 Новое: собираем ID выбранных материалов
+    const categoryMaterialsIds = selectedCategoryIds.reduce((acc, id) => {
+      const materials = categories.find((c) => c.id === id)?.materials || [];
+      const selectedTexts = categoryMaterials[id] || [];
+  
+      const selectedIds = materials
+        .filter((m) => selectedTexts.includes(m.material))
+        .map((m) => m.id);
+  
+      acc[id] = selectedIds;
+      return acc;
+    }, {});
   
     const projectTagsJson = selectedCategoryIds.map((id) => ({
       categoryId: id,
       categoryDescription: categoryDescriptions[id] || "",
-      selectedMaterialIds: categoryMaterials[id] || [],
+      selectedMaterialIds: categoryMaterialsIds[id] || [],
     }));
   
     formData.append("projectTagsJson", JSON.stringify(projectTagsJson));
@@ -77,7 +103,7 @@ export default function CreateProjectStep3Screen() {
       const response = await fetch(`${BACKEND_URL}/api/project/create`, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`, // 🛡️ добавлен JWT
+          "Authorization": `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
         body: formData,
@@ -89,7 +115,7 @@ export default function CreateProjectStep3Screen() {
       if (!response.ok) throw new Error(text || "Произошла ошибка при создании проекта");
   
       Alert.alert("Успешно", "Проект создан!");
-      navigation.navigate("Project")
+      navigation.navigate("Projects");
     } catch (err) {
       console.error("❌ Ошибка:", err);
       Alert.alert("Ошибка", err.message);
