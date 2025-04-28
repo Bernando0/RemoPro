@@ -18,7 +18,6 @@ import ProfileIcon from "../../assets/Profile-icon.svg";
 import ArrowIcon from "../../assets/Arrow-icon.svg";
 import { useAuthStore } from "../../store/authStore";
 
-
 export default function ProjectDetailScreen() {
   const { params } = useRoute();
   const navigation = useNavigation();
@@ -150,10 +149,10 @@ export default function ProjectDetailScreen() {
             <Logo width={130} height={20} />
           </View>
           <View className="flex-row space-x-2">
-            <TouchableOpacity className="p-1" onPress={() => navigation.navigate("ContractorNotification")}>
+            <TouchableOpacity className="p-1">
               <NoticeIcon size={36} />
             </TouchableOpacity>
-            <TouchableOpacity className="p-1" onPress={() => navigation.navigate("ContractorProfile")}>
+            <TouchableOpacity className="p-1">
               <ProfileIcon size={36} />
             </TouchableOpacity>
           </View>

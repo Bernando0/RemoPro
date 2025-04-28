@@ -17,7 +17,6 @@ import { useNavigation } from "@react-navigation/native";
 export default function ChatScreen() {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState("projects");
-    const navigation = useNavigation();
 
   const renderTab = (label, value) => (
     <TouchableOpacity
