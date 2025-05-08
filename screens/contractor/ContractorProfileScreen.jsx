@@ -57,7 +57,7 @@ export default function ContractorProfileScreen() {
 
   return (
     <View className="flex-1 bg-white">
-      <View className="bg-yellow-300 px-4 pt-20 pb-4 rounded-b-3xl">
+      <View className="bg-[#F4F4F9] px-4 pt-20 pb-4 rounded-b-3xl">
         <View className="flex-row items-center justify-between mb-2">
           <TouchableOpacity onPress={() => navigation.goBack()} className="p-1">
             <ArrowIcon />

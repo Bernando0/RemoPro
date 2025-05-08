@@ -71,7 +71,6 @@ export default function ClientTabsNavigator() {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Projects" component={ProjectsScreen} />
       <Tab.Screen name="Teams" component={TeamsScreen} />
-      <Tab.Screen name="Chat" component={ChatScreen} />
     </Tab.Navigator>
   );
 }
@@ -106,9 +105,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   activeTab: {
-    backgroundColor: '#000',
-    borderWidth: 2,
-    borderColor: '#000',
+    backgroundColor: '#7B04DF',
+    borderColor: '#7B04DF',
   },
 });
 

@@ -14,6 +14,7 @@ import ImageView from "react-native-image-viewing";
 import ArrowIcon from "../../assets/Arrow-icon.svg";
 import { BACKEND_URL } from "../../utils/config";
 import { useAuthStore } from "../../store/authStore";
+import { Modal, Linking } from "react-native";
 
 const { width } = Dimensions.get("window");
 
@@ -26,6 +27,8 @@ export default function TeamDetailScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalIndex, setModalIndex] = useState(0);
   const [modalImages, setModalImages] = useState([]);
+  const [showContactModal, setShowContactModal] = useState(false);
+
 
   useEffect(() => {
     fetch(`${BACKEND_URL}/api/contractor/${teamId}`, {
@@ -105,7 +108,7 @@ export default function TeamDetailScreen() {
               className="w-16 h-16 rounded-md"
             />
             <View>
-              <Text className="text-black text-m">{team.account_name}</Text>
+              <Text className="text-black ml-2 text-m">{team.account_name}</Text>
             </View>
           </View>
 
@@ -125,7 +128,7 @@ export default function TeamDetailScreen() {
               <Text className="text-lg font-semibold mb-2">Категории</Text>
               <View className="flex-row flex-wrap gap-2 mb-4">
                 {team.categories.map((tag, index) => (
-                  <View key={index} className="bg-yellow-200 px-3 py-1 rounded-full">
+                  <View key={index} className="bg-[#7B04DF20] px-3 py-1 rounded-full">
                     <Text className="text-sm text-gray-800">{tag}</Text>
                   </View>
                 ))}
@@ -148,12 +151,15 @@ export default function TeamDetailScreen() {
             </View>
           </View>
 
-          {/* Кнопка отправки сообщения */}
-          <TouchableOpacity className="bg-white border border-black py-3 rounded-xl mb-6">
-            <Text className="text-black text-center font-semibold text-base">
-              Отправить сообщение
-            </Text>
-          </TouchableOpacity>
+          <TouchableOpacity
+  className="bg-white border border-black py-3 rounded-xl mb-6"
+  onPress={() => setShowContactModal(true)}
+>
+  <Text className="text-black text-center font-semibold text-base">
+    Отправить сообщение
+  </Text>
+</TouchableOpacity>
+
         </View>
       </ScrollView>
 
@@ -164,6 +170,53 @@ export default function TeamDetailScreen() {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       />
+      <Modal
+  transparent={true}
+  visible={showContactModal}
+  onRequestClose={() => setShowContactModal(false)}
+>
+  <View className="flex-1 justify-center items-center bg-black/50 px-6">
+    <View className="bg-white w-full rounded-xl p-6">
+      <Text className="text-lg font-semibold mb-4 text-center">Связаться с командой</Text>
+
+      <Text className="text-gray-700 mb-2">
+        📧 Email: {team.email}
+      </Text>
+      <Text className="text-gray-700 mb-4">
+        📞 Телефон: {team.phone}
+      </Text>
+
+      <View className="flex-row justify-around">
+        <TouchableOpacity
+          onPress={() => {
+            const phone = team.phone?.replace(/\D/g, "");
+            Linking.openURL(`https://wa.me/${phone}`);
+          }}
+          className="bg-green-600 px-4 py-2 rounded-xl"
+        >
+          <Text className="text-white font-semibold">WhatsApp</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => Linking.openURL(`tel:${team.phone}`)}
+          className="bg-blue-600 px-4 py-2 rounded-xl"
+        >
+          <Text className="text-white font-semibold">Позвонить</Text>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity
+        onPress={() => setShowContactModal(false)}
+        className="mt-6 items-center"
+      >
+        <Text className="text-sm text-gray-600">Закрыть</Text>
+      </TouchableOpacity>
     </View>
+  </View>
+</Modal>
+
+    </View>
+    
   );
+  
 }

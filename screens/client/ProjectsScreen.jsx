@@ -56,7 +56,7 @@ export default function ProjectsScreen() {
   return (
     <View className="flex-1 bg-white">
       {/* Хедер */}
-      <View className="bg-yellow-300 px-4 pt-20 pb-4 rounded-b-3xl">
+      <View className="bg-[#F4F4F9] px-4 pt-20 pb-4 rounded-b-3xl">
         <View className="flex-row items-center justify-between mb-2">
           <TouchableOpacity className="p-1" onPress={() => navigation.navigate("Home")}>
             <ArrowIcon size={36} />
@@ -79,7 +79,7 @@ export default function ProjectsScreen() {
         </View>
 
         <TouchableOpacity
-          className="bg-yellow-300 border border-black py-3 px-5 rounded-xl mt-2 items-center"
+          className="bg-[#F4F4F9] border border-black py-3 px-5 rounded-xl mt-2 items-center"
           onPress={() => navigation.navigate("CreateProjectStep1")}
         >
           <Text className="text-black font-regular text-sm">
@@ -100,7 +100,7 @@ export default function ProjectsScreen() {
           <TouchableOpacity
             key={project.id}
             onPress={() => navigation.navigate("ProjectDetail", { projectId: project.id })}
-            className="bg-yellow-50 rounded-xl mb-4 p-3 relative"
+            className="bg-[#F4F4F9] rounded-xl mb-4 p-3 relative"
           >
             <View className="flex-row mb-2">
               <Image
@@ -136,7 +136,7 @@ export default function ProjectsScreen() {
   {project.tags.map((tag, i) => (
     <View
       key={i}
-      className="bg-yellow-200 px-2 py-1 rounded-full mr-2 mb-2"
+      className="bg-[#7B04DF20] px-2 py-1 rounded-full mr-2 mb-2"
     >
       <Text className="text-xs text-black">{tag.category?.action}</Text>
     </View>

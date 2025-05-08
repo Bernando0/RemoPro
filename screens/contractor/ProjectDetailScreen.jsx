@@ -57,7 +57,8 @@ export default function ProjectDetailScreen() {
         const projectData = await projRes.json();
         const actionsData = await actionsRes.json();
   
-        console.log("Данные проекта:", projectData);
+        console.log("Данные проекта:", JSON.stringify(projectData, null, 2));
+
         console.log("Действия по категориям:", actionsData);
   
         setProject(projectData);
@@ -140,7 +141,7 @@ export default function ProjectDetailScreen() {
   return (
     <View className="flex-1 bg-white">
       {/* Шапка */}
-      <View className="bg-yellow-300 rounded-b-3xl px-4 pt-20 pb-4 absolute top-0 left-0 right-0 z-10">
+      <View className="bg-[#F4F4F9] rounded-b-3xl px-4 pt-20 pb-4 absolute top-0 left-0 right-0 z-10">
         <View className="flex-row items-center justify-between mb-2">
           <TouchableOpacity className="p-1" onPress={() => navigation.goBack()}>
             <ArrowIcon size={36} />
@@ -164,11 +165,11 @@ export default function ProjectDetailScreen() {
           <View className="flex-row items-center mb-6">
           <Image
   source={{
-    uri: activeTag?.contractor?.profileImg
-      ? `${BACKEND_URL}${activeTag.contractor.profileImg}`
+    uri: project?.client_img
+      ? `${BACKEND_URL}${project?.client_img}`
       : require("../../assets/Profile.png"), // Путь к дефолтной картинке
   }}
-  className="w-28 h-28 rounded-md mr-4"
+  className="w-20 h-20 mt-5 rounded-md mr-4"
 />
 
             <View>
@@ -235,28 +236,43 @@ export default function ProjectDetailScreen() {
                   </Text>
                   <View className="flex-row space-x-2">
                     <TouchableOpacity
-                      className="py-2 px-4 border border-gray-300 rounded-full"
+                      className="py-2 px-4 mr-1 border border-gray-300 rounded-full"
                       onPress={() => setActiveTag(tag)}
                     >
                       <Text className="text-sm text-black">Описание</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      disabled={disabled}
-                      className={`py-2 px-4 rounded-full ${buttonStyle}`}
-                      onPress={() => {
-                        if (!disabled) {
-                          setPendingTagId(action?.projectTag?.id); // Оставляем если нужно для BID
-                          setSelectedActionStatus(action?.status || null);
-                          setPendingActionId(action?.id); // Новый стейт для ID ProjectTagContractor
-                          setConfirmModal(true);
-                        }
-                      }}
-                      
-                      
-                      
-                    >
-                      <Text className="text-sm text-white">{buttonText}</Text>
-                    </TouchableOpacity>
+  disabled={disabled}
+  className={`py-2 px-4 rounded-full ${buttonStyle}`}
+  onPress={() => {
+    if (!disabled) {
+      if (action) {
+        setPendingTagId(action.projectTag?.id);
+        setSelectedActionStatus(action.status || null);
+        setPendingActionId(action.id);
+
+        console.log("Нажата кнопка (есть action)");
+        console.log("pendingTagId:", action.projectTagId);
+        console.log("selectedActionStatus:", action.status || null);
+        console.log("pendingActionId:", action.id);
+      } else {
+        setPendingTagId(tag.projectTagId); // <-- Исправлено здесь
+        setSelectedActionStatus(null);
+        setPendingActionId(null);
+
+        console.log("Нажата кнопка (нет action)");
+        console.log("pendingTagId:", tag.projectTagId); // <-- Лог правильный
+        console.log("selectedActionStatus:", null);
+        console.log("pendingActionId:", null);
+      }
+      setConfirmModal(true);
+    }
+  }}
+>
+  <Text className="text-sm text-white">{buttonText}</Text>
+</TouchableOpacity>
+
+
                   </View>
                 </View>
               </View>

@@ -285,7 +285,7 @@ export default function HomeScreen() {
 
   return (
     <View className="flex-1 bg-white">
-    <View className="bg-yellow-300 rounded-b-3xl overflow-hidden">
+    <View className="bg-[#F4F4F9] rounded-b-3xl overflow-hidden">
       {/* Фиксированная часть хедера */}
       <View className="px-4 pt-20 pb-2">
         <View className="flex-row items-center justify-between mb-2">
@@ -342,10 +342,10 @@ export default function HomeScreen() {
                   </TouchableOpacity>
                 ))}
                 <TouchableOpacity
-                  className="w-24 h-24 border border-dashed border-black rounded-md justify-center items-center"
+                  className="w-24 h-24 border border-dashed border-[#7B04DF] rounded-md justify-center items-center"
                   onPress={() => navigation.navigate("CreateProjectStep1")}
                 >
-                  <Text className="text-xs text-center text-black">Создать{"\n"}проект</Text>
+                  <Text className="text-xs text-center text-[#7B04DF]">Создать{"\n"}проект</Text>
                 </TouchableOpacity>
               </>
             )}
@@ -377,7 +377,7 @@ export default function HomeScreen() {
                 <TouchableOpacity
                   key={team.id}
                   onPress={() => navigation.navigate("TeamDetail", { teamId: team.id })}
-                  className="w-[48%] bg-yellow-50 rounded-xl mb-4 overflow-hidden"
+                  className="w-[48%] bg-[#F4F4F9] rounded-xl mb-4 overflow-hidden"
                 >
                   <View className="relative w-full h-28 justify-center items-center">
                     {hasImage ? (
@@ -401,7 +401,7 @@ export default function HomeScreen() {
                     </Text>
                     <View className="flex-row flex-wrap items-center">
                       {visibleTags.map((tag, i) => (
-                        <View key={i} className="bg-yellow-200 px-2 py-0.5 rounded-full mr-2 mt-2">
+                        <View key={i} className="bg-[#7B04DF20] px-2 py-0.5 rounded-full mr-2 mt-2">
                           <Text className="text-xs text-gray-800">{tag}</Text>
                         </View>
                       ))}

@@ -103,7 +103,7 @@ export default function TeamsScreen() {
 
   return (
     <View className="flex-1 bg-white">
-      <View className="bg-yellow-300 px-4 pt-20 pb-4 rounded-b-3xl">
+      <View className="bg-[#F4F4F9] px-4 pt-20 pb-4 rounded-b-3xl">
         <View className="flex-row items-center justify-between mb-2">
           <TouchableOpacity className="p-1" onPress={() => navigation.navigate("Home")}>
             <ArrowIcon name="arrow-back" size={36} />
@@ -220,7 +220,7 @@ export default function TeamsScreen() {
             return (
               <TouchableOpacity
   key={team.id}
-  className="w-[48%] bg-yellow-50 rounded-xl mb-4 overflow-hidden"
+  className="w-[48%] bg-[#F4F4F9] rounded-xl mb-4 overflow-hidden"
   onPress={() => navigation.navigate("TeamDetail", { teamId: team.id })}
 >
   <View className="relative w-full h-28 justify-center items-center">
@@ -245,7 +245,7 @@ export default function TeamsScreen() {
     </Text>
     <View className="flex-row flex-wrap items-center">
       {visibleTags.map((tag, i) => (
-        <View key={i} className="bg-yellow-200 px-2 py-0.5 rounded-full mr-2 mt-2">
+        <View key={i} className="bg-[#7B04DF20] px-2 py-0.5 rounded-full mr-2 mt-2">
           <Text className="text-xs text-gray-800">{tag}</Text>
         </View>
       ))}

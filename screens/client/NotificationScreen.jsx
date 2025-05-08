@@ -16,7 +16,7 @@ export default function NotificationScreen() {
   return (
     <View className="flex-1 bg-white">
       {/* Header */}
-      <View className="bg-yellow-300 px-4 pt-20 pb-4 rounded-b-3xl">
+      <View className="bg-[#F4F4F9] px-4 pt-20 pb-4 rounded-b-3xl">
         <View className="flex-row items-center justify-between mb-2">
           <TouchableOpacity className="p-1" onPress={() => navigation.goBack()}>
             <ArrowIcon name="arrow-back" size={36} />

@@ -40,6 +40,11 @@ export default function ProjectDetailScreen() {
   const [imageIndex, setImageIndex] = useState(0); // Индекс изображения
   const [modalImages, setModalImages] = useState([]); // Все изображения
 
+  useEffect(() => {
+    console.log("ActiveTag changed:", activeTag);
+  }, [activeTag]);
+  
+
   // Открытие модалки с изображением
   const openImageView = (images, index) => {
     const formatted = images.map((img) => ({
@@ -194,7 +199,7 @@ export default function ProjectDetailScreen() {
 
   return (
     <View className="flex-1 bg-white">
-      <View className="bg-yellow-300 rounded-b-3xl px-4 pt-20 pb-4 absolute top-0 left-0 right-0 z-10">
+      <View className="bg-[#F4F4F9] rounded-b-3xl px-4 pt-20 pb-4 absolute top-0 left-0 right-0 z-10">
         <View className="flex-row items-center justify-between mb-2">
           <TouchableOpacity className="p-1" onPress={() => navigation.goBack()}>
             <ArrowIcon size={36} />
@@ -268,7 +273,10 @@ export default function ProjectDetailScreen() {
                   <TouchableOpacity
                     onPress={() => {
                       setActiveTag({ ...tag, mode: "description" });
+                      
+                      
                       setTab("description");
+                      
                     }}
                     className="flex-1 py-2 border mr-1 border-gray-300 rounded-full items-center"
                   >
@@ -280,7 +288,7 @@ export default function ProjectDetailScreen() {
                       setActiveTag({ ...tag, mode: "contractors" });
                       setTab("search");
                     }}
-                    className="flex-1 py-2 ml-1 bg-yellow-300 rounded-full items-center"
+                    className="flex-1 py-2 ml-1 bg-[#7B04DF20] rounded-full items-center"
                   >
                     <Text className="text-sm text-black font-semibold">
                       Исполнители
@@ -444,7 +452,7 @@ export default function ProjectDetailScreen() {
                           return (
                             <View
                               key={team.id}
-                              className="w-48 bg-yellow-50 rounded-xl mr-4 p-3"
+                              className="w-48 bg-[#F4F4F9] rounded-xl mr-4 p-3"
                             >
                               <TouchableOpacity
                                 className="relative w-full h-28 justify-center items-center"
@@ -575,7 +583,7 @@ export default function ProjectDetailScreen() {
                                 return (
                                   <View
                                     key={req.id}
-                                    className="w-48 bg-yellow-50 rounded-xl mr-4 p-3"
+                                    className="w-48 bg-[#F4F4F9]rounded-xl mr-4 p-3"
                                   >
                                     <TouchableOpacity
                                       className="relative w-full h-28 justify-center items-center"

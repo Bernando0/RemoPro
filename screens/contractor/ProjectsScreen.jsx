@@ -83,7 +83,7 @@ export default function OrdersScreen() {
         onPress={() =>
           navigation.navigate("ContractorProjectDetail", { projectId: project.projectId })
         }
-        className="bg-yellow-50 rounded-xl mb-4 p-3"
+        className="bg-[#F4F4F9] rounded-xl mb-4 p-3"
       >
         <View className="flex-row mb-2">
           {imageUrl ? (
@@ -111,7 +111,7 @@ export default function OrdersScreen() {
         {tags.map((tag, idx) => {
   console.log(tags); // Лог здесь ок
   return (
-    <View key={idx} className="bg-yellow-200 px-2 py-1 rounded-full mr-2 mb-2">
+    <View key={idx} className="bg-[#7B04DF20] px-2 py-1 rounded-full mr-2 mb-2">
       <Text className="text-xs text-black">{tag.categoryName || "Категория"}</Text>
     </View>
   );
@@ -133,7 +133,7 @@ export default function OrdersScreen() {
   return (
     <View className="flex-1 bg-white">
       {/* Хедер */}
-      <View className="bg-yellow-300 px-4 pt-20 pb-4 rounded-b-3xl">
+      <View className="bg-[#F4F4F9] px-4 pt-20 pb-4 rounded-b-3xl">
         <View className="flex-row items-center justify-between mb-2">
           <TouchableOpacity className="p-1" onPress={() => navigation.goBack()}>
             <ArrowIcon width={36} height={36} />

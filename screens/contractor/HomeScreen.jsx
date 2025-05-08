@@ -87,7 +87,7 @@ export default function ContractorHomeScreen() {
   return (
     <View className="flex-1 bg-white">
       {/* Header */}
-      <View className="bg-yellow-300 rounded-b-3xl overflow-hidden">
+      <View className="bg-[#F4F4F9] rounded-b-3xl overflow-hidden">
         <View className="px-4 pt-20 pb-2">
           <View className="flex-row items-center justify-between mb-2">
             <View className="absolute left-0 right-0 items-center z-0">
@@ -156,7 +156,7 @@ export default function ContractorHomeScreen() {
             <TouchableOpacity
               key={project.id}
               onPress={() => navigation.navigate("ContractorProjectDetail", { projectId: project.id })}
-              className="bg-yellow-50 rounded-xl mb-4 p-3"
+              className="bg-[#F4F4F9] rounded-xl mb-4 p-3"
             >
               <View className="flex-row mb-2">
                 {imageUrl ? (
@@ -182,7 +182,7 @@ export default function ContractorHomeScreen() {
               {/* Теги категорий */}
               <View className="flex-row flex-wrap">
                 {tags.map((tag, idx) => (
-                  <View key={idx} className="bg-yellow-200 px-2 py-1 rounded-full mr-2 mb-2">
+                  <View key={idx} className="bg-[#7B04DF20] px-2 py-1 rounded-full mr-2 mb-2">
                     <Text className="text-xs text-black">{tag.category?.action}</Text>
                   </View>
                 ))}

@@ -68,7 +68,6 @@ export default function ContractorTabsNavigator() {
       <Tab.Screen name="Home" component={ContractorHomeScreen} />
       <Tab.Screen name="Projects" component={ContractorProjectsScreen} />
       <Tab.Screen name="Orders" component={ContractorOrdersScreen} />
-      <Tab.Screen name="Chat" component={ContractorChatScreen} />
     </Tab.Navigator>
   );
 }
