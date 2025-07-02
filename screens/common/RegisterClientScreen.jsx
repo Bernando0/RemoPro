@@ -35,7 +35,10 @@ export default function RegisterClientScreen() {
     try {
       const response = await fetch(`${BACKEND_URL}/api/register/user`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+  "Content-Type": "application/json",
+  "Accept": "application/json",
+},
         body: JSON.stringify(payload),
       });
 

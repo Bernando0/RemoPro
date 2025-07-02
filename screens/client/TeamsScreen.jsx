@@ -24,6 +24,18 @@ export default function TeamsScreen() {
   const token = useAuthStore((state) => state.token);
   const navigation = useNavigation();
 
+  const getImageUri = (img) => {
+  if (!img) return "";
+  const candidate =
+    typeof img === "string"
+      ? img
+      : img.url || img.imageUrl || img.path || img.img;
+  if (!candidate) return "";
+  if (candidate.startsWith("http")) return candidate;
+  return `${BACKEND_URL}${candidate}`;
+};
+
+
 
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -215,7 +227,8 @@ export default function TeamsScreen() {
             const visibleTags = (team.categories || []).slice(0, 2);
             const hiddenTagsCount = (team.categories || []).length - 2;
             const hasImage = Boolean(team.previewImage);
-            const imageUri = hasImage ? `${BACKEND_URL}${team.previewImage}` : null;
+            const imageUri = getImageUri(team.previewImage);
+
 
             return (
               <TouchableOpacity
@@ -224,13 +237,14 @@ export default function TeamsScreen() {
   onPress={() => navigation.navigate("TeamDetail", { teamId: team.id })}
 >
   <View className="relative w-full h-28 justify-center items-center">
-    {hasImage ? (
-      <Image source={{ uri: imageUri }} className="w-full h-28" />
-    ) : (
-      <View className="w-full h-28 bg-gray-200 justify-center items-center">
-        <Image source={IconTeam} className="w-12 h-12 opacity-50" />
-      </View>
-    )}
+    {imageUri ? (
+  <Image source={{ uri: imageUri }} className="w-full h-28" />
+) : (
+  <View className="w-full h-28 bg-gray-200 justify-center items-center">
+    <Image source={IconTeam} className="w-12 h-12 opacity-50" />
+  </View>
+)}
+
     <TouchableOpacity disabled className="absolute top-1 right-1 p-1.5 rounded-full">
       <Ionicons name="heart-outline" size={24} color="white" />
     </TouchableOpacity>
@@ -253,7 +267,7 @@ export default function TeamsScreen() {
     </View>
     <View className="flex-row items-center mt-1">
       <Ionicons name="location-outline" size={14} color="#999" />
-      <Text className="text-xs text-gray-600 ml-1">{team.location || "Не указано"}</Text>
+      <Text className="text-xs text-gray-600 ml-1">{team.location?.location || "Не указано"}</Text>
     </View>
   </View>
 </TouchableOpacity>

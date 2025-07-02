@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { BACKEND_URL } from "../../../utils/config";
@@ -18,7 +19,9 @@ import ArrowIcon from "../../../assets/Arrow-icon.svg";
 export default function CreateProjectStep3Screen() {
   const { params } = useRoute();
   const navigation = useNavigation();
-    const token = useAuthStore((state) => state.token);
+  const token = useAuthStore((state) => state.token);
+
+  const [loading, setLoading] = useState(false);
 
   const {
     title,
@@ -31,25 +34,14 @@ export default function CreateProjectStep3Screen() {
     categories = [],
   } = params;
 
-  const categoryMaterialsIds = selectedCategoryIds.reduce((acc, id) => {
-    const materials = categories.find((c) => c.id === id)?.materials || [];
-    const selectedTexts = categoryMaterials[id] || [];
-  
-    const selectedIds = materials
-      .filter((m) => selectedTexts.includes(m.material))
-      .map((m) => m.id);
-  
-    acc[id] = selectedIds;
-    return acc;
-  }, {});
-  
-
   const handleSubmit = async () => {
+    setLoading(true);
+
     const formData = new FormData();
-  
+
     formData.append("title", title);
     formData.append("description", description);
-  
+
     if (sourceImages[0]) {
       sourceImages.forEach((img, index) => {
         formData.append("sourceImg", {
@@ -59,7 +51,7 @@ export default function CreateProjectStep3Screen() {
         });
       });
     }
-  
+
     if (refImages[0]) {
       refImages.forEach((img, index) => {
         formData.append("refImg", {
@@ -69,64 +61,57 @@ export default function CreateProjectStep3Screen() {
         });
       });
     }
-  
-    // 👇 Новое: собираем ID выбранных материалов
+
     const categoryMaterialsIds = selectedCategoryIds.reduce((acc, id) => {
       const materials = categories.find((c) => c.id === id)?.materials || [];
       const selectedTexts = categoryMaterials[id] || [];
-  
+
       const selectedIds = materials
         .filter((m) => selectedTexts.includes(m.material))
         .map((m) => m.id);
-  
+
       acc[id] = selectedIds;
       return acc;
     }, {});
-  
+
     const projectTagsJson = selectedCategoryIds.map((id) => ({
       categoryId: id,
       categoryDescription: categoryDescriptions[id] || "",
       selectedMaterialIds: categoryMaterialsIds[id] || [],
     }));
-  
+
     formData.append("projectTagsJson", JSON.stringify(projectTagsJson));
-  
-    console.log("👉 Отправляем:", {
-      title,
-      description,
-      sourceImages,
-      refImages,
-      projectTagsJson,
-    });
-  
+
     try {
       const response = await fetch(`${BACKEND_URL}/api/project/create`, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
         body: formData,
       });
-  
+
       const text = await response.text();
       console.log("📩 Ответ:", response.status, text);
-  
+
       if (!response.ok) throw new Error(text || "Произошла ошибка при создании проекта");
-  
+
       Alert.alert("Успешно", "Проект создан!");
-      navigation.navigate("Projects");
+
+      // ✅ Переход на Home
+      navigation.navigate("Client");
     } catch (err) {
       console.error("❌ Ошибка:", err);
       Alert.alert("Ошибка", err.message);
+    } finally {
+      setLoading(false);
     }
   };
-  
-  
 
   return (
     <View className="flex-1 bg-white" contentContainerStyle={{ paddingBottom: 100 }}>
-
+      {/* Хедер */}
       <View className="bg-[#F4F4F9] px-4 pt-20 pb-4 rounded-b-3xl">
         <View className="flex-row items-center justify-between mb-2">
           <TouchableOpacity className="p-1 z-10" onPress={() => navigation.goBack()}>
@@ -145,50 +130,56 @@ export default function CreateProjectStep3Screen() {
           </View>
         </View>
       </View>
+
       <ScrollView className="px-4 pt-6">
-      <Text className="text-2xl font-bold mb-4">Проверьте проект перед отправкой</Text>
+        <Text className="text-2xl font-bold mb-4">Проверьте проект перед отправкой</Text>
 
-      <Text className="text-sm text-gray-500 mb-1">Название</Text>
-      <Text className="text-base font-medium mb-2">{title}</Text>
+        <Text className="text-sm text-gray-500 mb-1">Название</Text>
+        <Text className="text-base font-medium mb-2">{title}</Text>
 
-      <Text className="text-sm text-gray-500 mb-1">Описание</Text>
-      <Text className="text-base font-medium mb-4">{description}</Text>
+        <Text className="text-sm text-gray-500 mb-1">Описание</Text>
+        <Text className="text-base font-medium mb-4">{description}</Text>
 
-      <Text className="text-sm text-gray-500 mb-1">Фото объекта</Text>
-      <ScrollView horizontal className="mb-4">
-        {sourceImages.map((img, i) => (
-          <Image key={i} source={{ uri: img.uri }} className="w-24 h-24 mr-2 rounded-md" />
-        ))}
-      </ScrollView>
+        <Text className="text-sm text-gray-500 mb-1">Фото объекта</Text>
+        <ScrollView horizontal className="mb-4">
+          {sourceImages.map((img, i) => (
+            <Image key={i} source={{ uri: img.uri }} className="w-24 h-24 mr-2 rounded-md" />
+          ))}
+        </ScrollView>
 
-      <Text className="text-sm text-gray-500 mb-1">Фото референса</Text>
-      <ScrollView horizontal className="mb-4">
-        {refImages.map((img, i) => (
-          <Image key={i} source={{ uri: img.uri }} className="w-24 h-24 mr-2 rounded-md" />
-        ))}
-      </ScrollView>
+        <Text className="text-sm text-gray-500 mb-1">Фото референса</Text>
+        <ScrollView horizontal className="mb-4">
+          {refImages.map((img, i) => (
+            <Image key={i} source={{ uri: img.uri }} className="w-24 h-24 mr-2 rounded-md" />
+          ))}
+        </ScrollView>
 
-      <Text className="text-sm text-gray-500 mb-3">Категории работ</Text>
-      {selectedCategoryIds.map((id) => (
-        <View key={id} className="mb-4">
-          <Text className="text-base font-semibold mb-1">• {categories.find((c) => c.id === id)?.action || `Категория ${id}`}</Text>
-          <Text className="text-sm text-gray-600 mb-1">
-            {categoryDescriptions[id] || "Без описания"}
-          </Text>
-          <View className="flex-row flex-wrap">
-          {(categoryMaterials[id] || []).map((materialText, index) => (
-  <View key={index} className="bg-yellow-200 px-3 py-1 rounded-full mr-2 mt-2">
-    <Text className="text-sm text-gray-800">{materialText}</Text>
-  </View>
-))}
-
+        <Text className="text-sm text-gray-500 mb-3">Категории работ</Text>
+        {selectedCategoryIds.map((id) => (
+          <View key={id} className="mb-4">
+            <Text className="text-base font-semibold mb-1">• {categories.find((c) => c.id === id)?.action || `Категория ${id}`}</Text>
+            <Text className="text-sm text-gray-600 mb-1">
+              {categoryDescriptions[id] || "Без описания"}
+            </Text>
+            <View className="flex-row flex-wrap">
+              {(categoryMaterials[id] || []).map((materialText, index) => (
+                <View key={index} className="bg-yellow-200 px-3 py-1 rounded-full mr-2 mt-2">
+                  <Text className="text-sm text-gray-800">{materialText}</Text>
+                </View>
+              ))}
+            </View>
           </View>
-        </View>
-      ))}
-       
-      <TouchableOpacity onPress={handleSubmit} className="bg-black mt-6 py-3 rounded-xl items-center">
-        <Text className="text-white font-semibold text-base">Создать проект</Text>
-      </TouchableOpacity>
+        ))}
+
+        {loading ? (
+          <View className="mt-6 py-3 rounded-xl items-center">
+            <ActivityIndicator size="large" color="black" />
+          </View>
+        ) : (
+          <TouchableOpacity onPress={handleSubmit} className="bg-black mt-6 py-3 rounded-xl items-center">
+            <Text className="text-white font-semibold text-base">Создать проект</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
     </View>
   );

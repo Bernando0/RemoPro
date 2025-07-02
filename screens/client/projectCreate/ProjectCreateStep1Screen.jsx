@@ -20,6 +20,9 @@ import ProfileIcon from "../../../assets/Profile-icon.svg";
 import ArrowIcon from "../../../assets/Arrow-icon.svg";
 
 
+
+
+
 export default function CreateProjectStep1Screen() {
   const token = useAuthStore((state) => state.token);
   const navigation = useNavigation();
@@ -53,6 +56,38 @@ export default function CreateProjectStep1Screen() {
       setter((prev) => [...prev, result.assets[0]]);
     }
   };
+
+  const handleRemoAI = async () => {
+  if (!description.trim()) {
+    alert("Введите описание проекта");
+    return;
+  }
+
+  try {
+    const response = await fetch("http://20.79.44.47:8000/recommend", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text: description }),
+    });
+
+    if (!response.ok) throw new Error("Ошибка при обращении к ИИ модели");
+
+    const data = await response.json();
+    const ids = data?.recommendations?.work_category?.map((cat) => cat.id) || [];
+
+    if (ids.length === 0) {
+      alert("RemoAI не нашёл подходящих категорий.");
+    } else {
+      setSelectedCategoryIds(ids);
+      alert(`Категории автоматически выбраны (${ids.length} шт).`);
+    }
+  } catch (error) {
+    console.error("Ошибка RemoAI:", error);
+    alert("Не удалось получить категории от RemoAI");
+  }
+};
 
   const toggleCategory = (id) => {
     setSelectedCategoryIds((prev) =>
@@ -145,6 +180,14 @@ export default function CreateProjectStep1Screen() {
             <Ionicons name="add" size={24} color="black" />
           </TouchableOpacity>
         </ScrollView>
+
+        <TouchableOpacity
+  onPress={handleRemoAI}
+  className="border border-black py-2 px-4 rounded-xl mb-4 bg-black"
+>
+  <Text className="text-sm font-medium text-white text-center">Категории с RemoAI</Text>
+</TouchableOpacity>
+
 
         <Text className="text-x text-black mb-2">Выбранные категории</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-4">

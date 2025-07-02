@@ -29,6 +29,18 @@ export default function TeamDetailScreen() {
   const [modalImages, setModalImages] = useState([]);
   const [showContactModal, setShowContactModal] = useState(false);
 
+  const getImageUri = (img) => {
+  if (!img) return "";
+  const candidate =
+    typeof img === "string"
+      ? img
+      : img.url || img.imageUrl || img.path || img.img;
+  if (!candidate) return "";
+  if (candidate.startsWith("http")) return candidate;
+  return `${BACKEND_URL}${candidate}`;
+};
+
+
 
   useEffect(() => {
     fetch(`${BACKEND_URL}/api/contractor/${teamId}`, {
@@ -43,8 +55,9 @@ export default function TeamDetailScreen() {
 
   const openModal = (images, index) => {
     const formatted = images.map((img) => ({
-      uri: `${BACKEND_URL}${img.img}`,
-    }));
+  uri: getImageUri(img),
+}));
+
     setModalImages(formatted);
     setModalIndex(index);
     setModalVisible(true);
@@ -88,9 +101,10 @@ export default function TeamDetailScreen() {
                 onPress={() => openModal(team.gallery, i)}
               >
                 <Image
-                  source={{ uri: `${BACKEND_URL}${img.img}` }}
-                  className="w-full h-64"
-                />
+  source={{ uri: getImageUri(img) }}
+  className="w-full h-64"
+/>
+
               </TouchableOpacity>
             ))}
           </Swiper>
@@ -99,14 +113,15 @@ export default function TeamDetailScreen() {
         {/* Контент */}
         <View className="px-4 pt-4">
           <View className="flex-row items-center mb-4 space-x-3">
-            <Image
-              source={
-                team.profileImg
-                  ? { uri: `${BACKEND_URL}${team.profileImg}` }
-                  : require("../../assets/Inbox.png")
-              }
-              className="w-16 h-16 rounded-md"
-            />
+           <Image
+  source={
+    team.profileImg
+      ? { uri: getImageUri(team.profileImg) }
+      : require("../../assets/Inbox.png")
+  }
+  className="w-16 h-16 rounded-md"
+/>
+
             <View>
               <Text className="text-black ml-2 text-m">{team.account_name}</Text>
             </View>

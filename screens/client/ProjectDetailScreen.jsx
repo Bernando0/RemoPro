@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Modal,
+  Alert,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -31,33 +32,107 @@ export default function ProjectDetailScreen() {
   const [tab, setTab] = useState("description");
   const [contractors, setContractors] = useState([]);
   const [contractorLoading, setContractorLoading] = useState(false);
-  const [confirmModal, setConfirmModal] = useState(false);
-
   const [requests, setRequests] = useState([]);
   const [requestsLoading, setRequestsLoading] = useState(false);
-  
-  const [visibleImage, setVisibleImage] = useState(false); // Состояние для отображения ImageView
-  const [imageIndex, setImageIndex] = useState(0); // Индекс изображения
-  const [modalImages, setModalImages] = useState([]); // Все изображения
+  const [visibleImage, setVisibleImage] = useState(false);
+  const [imageIndex, setImageIndex] = useState(0);
+  const [modalImages, setModalImages] = useState([]);
 
-  useEffect(() => {
-    console.log("ActiveTag changed:", activeTag);
-  }, [activeTag]);
-  
+  const [confirmModal, setConfirmModal] = useState(false);
 
-  // Открытие модалки с изображением
-  const openImageView = (images, index) => {
-    const formatted = images.map((img) => ({
-      uri: `${BACKEND_URL}${img.img}`,
-    }));
-    setModalImages(formatted); // Устанавливаем все изображения
-    setImageIndex(index); // Устанавливаем индекс текущего изображения
-    setVisibleImage(true); // Открываем модалку
+  // Универсальный геттер ссылки на изображение
+const getImageUri = (img) => {
+  if (!img) return "";
+  let candidate =
+    typeof img === "string"
+      ? img
+      : img.url || img.imageUrl || img.path;
+
+  if (!candidate) return "";
+
+  if (candidate.startsWith("http")) {
+    return candidate; // уже полный URL
+  }
+
+  return `${BACKEND_URL}${candidate}`;
+};
+
+
+
+
+  // Получение проекта
+  const fetchProject = async () => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/project/${projectId}`);
+
+      const data = await res.json();
+console.log("📷 project.sourceImg:", data.sourceImg);
+console.log("📷 project.refImg:", data.refImg);
+setProject(data);
+
+      setProject(data);
+      setLoading(false);
+    } catch (err) {
+      console.error("Ошибка загрузки проекта:", err);
+      setLoading(false);
+    }
   };
 
-  // Закрытие модалки
-  const closeImageView = () => setVisibleImage(false);
+  useEffect(() => {
+    fetchProject();
+  }, [projectId]);
 
+
+  const approveContractor = async () => {
+  try {
+    const res = await fetch(
+      `${BACKEND_URL}/api/project-contractor/approve-contractor?ptcId=${activeTag?.contractor?.id}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (res.ok) {
+      Alert.alert("Успешно", "Подрядчик утвержден!");
+      setActiveTag(null);
+      fetchRequests(); // Перезагрузить заявки
+    } else {
+      Alert.alert("Ошибка", "Не удалось подтвердить подрядчика.");
+    }
+  } catch (error) {
+    console.error("Ошибка утверждения подрядчика:", error);
+    Alert.alert("Ошибка", "Произошла ошибка при утверждении.");
+  }
+};
+
+
+  // Получение подрядчиков
+  useEffect(() => {
+    const fetchContractors = async () => {
+      if (activeTag && activeTag.mode === "contractors" && tab === "search") {
+        setContractorLoading(true);
+        try {
+          const res = await fetch(
+            `${BACKEND_URL}/api/contractor/filter?projectTagIds=${activeTag.projectTagId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          const data = await res.json();
+          setContractors(data);
+        } catch (err) {
+          console.error("Ошибка загрузки подрядчиков:", err);
+        } finally {
+          setContractorLoading(false);
+        }
+      }
+    };
+    fetchContractors();
+  }, [activeTag, tab]);
+
+  // Получение заявок
   const fetchRequests = async () => {
     if (activeTag && activeTag.mode === "contractors" && tab === "requests") {
       setRequestsLoading(true);
@@ -65,13 +140,10 @@ export default function ProjectDetailScreen() {
         const res = await fetch(
           `${BACKEND_URL}/api/project-contractor/get/action?ptId=${activeTag.projectTagId}`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
         const data = await res.json();
-        
         setRequests(data);
       } catch (error) {
         console.error("Ошибка загрузки заявок:", error);
@@ -80,115 +152,38 @@ export default function ProjectDetailScreen() {
       }
     }
   };
-  
+
   useEffect(() => {
     fetchRequests();
   }, [activeTag, tab]);
-
-  const updateContractorStatus = (tagId, status) => {
-    setProject((prevProject) => {
-      const updatedTags = prevProject.tags.map((tag) =>
-        tag.projectTagId === tagId ? { ...tag, hasContractor: status } : tag
-      );
-      return { ...prevProject, tags: updatedTags };
-    });
-  };
-
-  useEffect(() => {
-    if (needToRefetchProject) {
-      fetchProject();
-    }
-  }, [needToRefetchProject]);
-
-  // Функция подтверждения подрядчика
-  const [needToRefetchProject, setNeedToRefetchProject] = useState(false);
-
-  const approveContractor = async () => {
-    try {
-      const res = await fetch(
-        `${BACKEND_URL}/api/project-contractor/approve-contractor?ptcId=${activeTag.contractor.id}`,
-        {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-  
-      if (res.ok) {
-        Alert.alert("Успешно", "Подрядчик утвержден!");
-        setNeedToRefetchProject(true); // Отмечаем, что нужно обновить проект
-        setConfirmModal(false); // Закрываем модалку
-      } else {
-        Alert.alert("Ошибка", "Не удалось подтвердить подрядчика.");
-      }
-    } catch (err) {
-      console.error("Ошибка утверждения подрядчика:", err);
-      Alert.alert("Ошибка сети", "Не удалось подтвердить подрядчика.");
-    }
-  };
-  
-  
 
   const statusName = (status) => {
     switch (status) {
       case "PENDING":
         return "На рассмотрении";
       case "APPROVED":
-        return "Одобрены";
+        return "Одобрено";
       case "REJECTED":
-        return "Отклонены";
+        return "Отклонено";
       case "WAITING_USER":
-        return "Ожидает подтверждения пользователя";
-      case "WAITING_CONTRACTOR":
-        return "Ожидает подтверждения подрядчика";
+        return "Ожидает подтверждения";
       case "INVITE":
-        return "Приглашены";
+        return "Приглашено";
       default:
         return status;
     }
   };
 
-  useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/project/${projectId}`);
-        const data = await res.json();
-        
+ const openImageView = (images, index) => {
+  const formatted = images.map((img) => ({ uri: getImageUri(img) }));
+  setModalImages(formatted);
+  setImageIndex(index);
+  setVisibleImage(true);
+};
 
-        setProject(data);
-        setLoading(false);
-      } catch (err) {
-        console.error("Ошибка загрузки проекта:", err);
-        setLoading(false);
-      }
-    };
 
-    fetchProject();
-  }, [projectId]);
+  const closeImageView = () => setVisibleImage(false);
 
-  useEffect(() => {
-    const fetchContractors = async () => {
-      if (activeTag && activeTag.mode === "contractors" && tab === "search") {
-        setContractorLoading(true);
-        let url = `${BACKEND_URL}/api/contractor/filter?projectTagIds=${activeTag.projectTagId}`; // Здесь тоже нужно использовать projectTagId
-
-        try {
-          const res = await fetch(url, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          const data = await res.json();
-          setContractors(data);
-        } catch (err) {
-          console.error("Ошибка загрузки команд:", err);
-        } finally {
-          setContractorLoading(false);
-        }
-      }
-    };
-
-    fetchContractors();
-  }, [activeTag, tab]);
   if (loading || !project) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
@@ -199,6 +194,7 @@ export default function ProjectDetailScreen() {
 
   return (
     <View className="flex-1 bg-white">
+      {/* Header */}
       <View className="bg-[#F4F4F9] rounded-b-3xl px-4 pt-20 pb-4 absolute top-0 left-0 right-0 z-10">
         <View className="flex-row items-center justify-between mb-2">
           <TouchableOpacity className="p-1" onPress={() => navigation.goBack()}>
@@ -208,96 +204,90 @@ export default function ProjectDetailScreen() {
             <Logo width={130} height={20} />
           </View>
           <View className="flex-row space-x-2">
-                               <TouchableOpacity className="p-1"
-                               onPress={() => navigation.navigate("ClientNotification")}>
-                                 
-                                 <NoticeIcon name="notifications-outline" size={36} />
-                               </TouchableOpacity>
-                               <TouchableOpacity
-                                 className="p-1"
-                                 onPress={() => navigation.navigate("UserProfile")}>
-                                 <ProfileIcon name="person-circle-outline" size={36} />
-                               </TouchableOpacity>
-                             </View>
+            <TouchableOpacity onPress={() => navigation.navigate("ClientNotification")} className="p-1">
+              <NoticeIcon size={36} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("UserProfile")} className="p-1">
+              <ProfileIcon size={36} />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 
-      <ScrollView className="flex-1 pt-40  pb-24">
-        <View className="px-4 pt-6 pb-24">
+      <ScrollView className="flex-1 pt-40 pb-24">
+        <View className="px-4">
           <Text className="text-sm text-gray-500 mb-1">Название работы</Text>
           <Text className="text-lg font-semibold mb-4">{project.title}</Text>
 
           <Text className="text-sm text-gray-500 mb-1">Описание работы</Text>
-          <Text className="text-base text-gray-700 mb-4">
-            {project.description}
-          </Text>
+          <Text className="text-base text-gray-700 mb-4">{project.description}</Text>
 
+          {/* Photos */}
           <Text className="text-sm text-gray-500 mb-2">Объект ремонта сейчас</Text>
           <ScrollView horizontal className="mb-4">
-            {project.sourceImg.map((img, i) => (
-              <TouchableOpacity key={i} onPress={() => openImageView(project.sourceImg, i)}>
-                <Image source={{ uri: `${BACKEND_URL}${img}` }} className="w-24 h-24 mr-2 rounded-md" />
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+  {project.sourceImg?.map((img, i) => (
+    <TouchableOpacity key={i} onPress={() => openImageView(project.sourceImg, i)}>
+      <Image
+        source={{ uri: getImageUri(img) }}
+        className="w-24 h-24 mr-2 rounded-md"
+      />
+    </TouchableOpacity>
+  ))}
+</ScrollView>
 
           <Text className="text-sm text-gray-500 mb-2">Примеры желаемого объекта</Text>
           <ScrollView horizontal className="mb-4">
-            {project.refImg.map((img, i) => (
-              <TouchableOpacity key={i} onPress={() => openImageView(project.refImg, i)}>
-                <Image source={{ uri: `${BACKEND_URL}${img}` }} className="w-24 h-24 mr-2 rounded-md" />
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+  {project.refImg?.map((img, i) => (
+    <TouchableOpacity key={i} onPress={() => openImageView(project.refImg, i)}>
+      <Image
+        source={{ uri: getImageUri(img) }}
+        className="w-24 h-24 mr-2 rounded-md"
+      />
+    </TouchableOpacity>
+  ))}
+</ScrollView>
 
-          {/* ImageView для отображения изображения в модалке */}
           <ImageView
-            images={modalImages} // Все изображения передаем сюда
-            imageIndex={imageIndex} // Текущий индекс изображения
-            isVisible={visibleImage} // Видимость модалки
-            onClose={closeImageView} // Функция для закрытия модалки
+            images={modalImages}
+            imageIndex={imageIndex}
+            isVisible={visibleImage}
+            onClose={closeImageView}
           />
 
-
+          {/* Categories */}
           <Text className="text-sm text-gray-500 mb-2">Категории работ</Text>
-          <View className="space-y-4">
-            {project.tags.map((tag, index) => (
-              <View
-                key={index}
-                className="p-4 bg-white rounded-xl border border-gray-200 mb-2 "
-              >
-                <Text className="text-base font-semibold text-black mb-3">
-                  {tag.category.action}
-                </Text>
-                <View className="flex-row space-x-2">
-                  <TouchableOpacity
-                    onPress={() => {
-                      setActiveTag({ ...tag, mode: "description" });
-                      
-                      
-                      setTab("description");
-                      
-                    }}
-                    className="flex-1 py-2 border mr-1 border-gray-300 rounded-full items-center"
-                  >
-                    <Text className="text-sm text-black">Подробнее</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    onPress={() => {
-                      setActiveTag({ ...tag, mode: "contractors" });
-                      setTab("search");
-                    }}
-                    className="flex-1 py-2 ml-1 bg-[#7B04DF20] rounded-full items-center"
-                  >
-                    <Text className="text-sm text-black font-semibold">
-                      Исполнители
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+          {project.tags.map((tag, index) => (
+            <View key={index} className="p-4 bg-white rounded-xl border border-gray-200 mb-3">
+              <View className="flex-row justify-between items-center mb-2">
+                <Text className="text-base font-semibold">{tag.category.action}</Text>
+                {tag.hasContractor && (
+                  <View className="bg-green-500 px-2 py-1 rounded-full">
+                    <Text className="text-white text-xs">Назначен</Text>
+                  </View>
+                )}
               </View>
-            ))}
-          </View>
+              <View className="flex-row space-x-2">
+                <TouchableOpacity
+                  onPress={() => {
+                    setActiveTag({ ...tag, mode: "description" });
+                    setTab("description");
+                  }}
+                  className="flex-1 py-2 border border-gray-300 rounded-full items-center"
+                >
+                  <Text className="text-sm">Подробнее</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    setActiveTag({ ...tag, mode: "contractors" });
+                    setTab("search");
+                  }}
+                  className="flex-1 py-2 bg-[#7B04DF20] rounded-full items-center"
+                >
+                  <Text className="text-sm font-semibold">Исполнители</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ))}
         </View>
       </ScrollView>
 
@@ -316,11 +306,11 @@ export default function ProjectDetailScreen() {
 
               <View className="flex-row mb-4">
                 <Image
-                  source={{
-                    uri: `${BACKEND_URL}${
-                      activeTag.contractor.profileImg || IconTeam
-                    }`,
-                  }}
+                  source={
+    activeTag.contractor.profileImg
+      ? { uri: getImageUri(activeTag.contractor.profileImg) }
+      : IconTeam
+  }
                   className="w-28 h-28 rounded-md mr-4"
                 />
                 <View>
@@ -446,9 +436,8 @@ export default function ProjectDetailScreen() {
                       ) : (
                         contractors.map((team) => {
                           const hasImage = Boolean(team.previewImage);
-                          const imageUri = hasImage
-                            ? `${BACKEND_URL}${team.previewImage}`
-                            : null;
+                          const imageUri = getImageUri(team.previewImage);
+
                           return (
                             <View
                               key={team.id}
@@ -514,11 +503,14 @@ export default function ProjectDetailScreen() {
                                       "Response from invite request:",
                                       resData
                                     );
-                                    if (res.ok) {
-                                      alert("Заявка успешно отправлена!");
-                                    } else {
-                                      alert("Ошибка при отправке заявки.");
-                                    }
+                                   if (res.ok) {
+  alert("Заявка успешно отправлена!");
+  setActiveTag(null);
+  await fetchProject();
+} else {
+  alert("Ошибка при отправке заявки.");
+}
+
                                   } catch (error) {
                                     console.error(
                                       "Ошибка отправки заявки:",
@@ -573,12 +565,10 @@ export default function ProjectDetailScreen() {
                                 const hasImage =
                                   req.contractor?.profileImg ||
                                   req.contractor?.firstImage;
-                                const imageUri = hasImage
-                                  ? `${BACKEND_URL}${
-                                      req.contractor?.profileImg ||
-                                      req.contractor?.firstImage
-                                    }`
-                                  : null;
+                               const imageUri = getImageUri(
+  req.contractor?.profileImg || req.contractor?.firstImage
+);
+
 
                                 return (
                                   <View
@@ -640,17 +630,13 @@ export default function ProjectDetailScreen() {
                                               }
                                             );
                                             if (res.ok) {
-                                              alert(
-                                                "Заявка успешно подтверждена!"
-                                              );
-                                              // Обновление состояния или перезагрузка данных
-                                              setRequestsLoading(true);
-                                              fetchRequests(); // Обновление данных заявок
-                                            } else {
-                                              alert(
-                                                "Ошибка при подтверждении заявки."
-                                              );
-                                            }
+  alert("Заявка успешно подтверждена!");
+  // Обновление состояния или перезагрузка данных
+  setRequestsLoading(true);
+  fetchRequests(); // Обновление данных заявок
+} else {
+  alert("Ошибка при подтверждении заявки.");
+}
                                           } catch (error) {
                                             console.error(
                                               "Ошибка при подтверждении заявки:",

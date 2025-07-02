@@ -22,6 +22,17 @@ export default function ProjectsScreen() {
   const token = useAuthStore((state) => state.token);
   const navigation = useNavigation();
 
+  const getImageUri = (img) => {
+  if (!img) return "";
+  if (typeof img === "string") return img.startsWith("http") ? img : `${BACKEND_URL}${img}`;
+  if (img.url) return img.url.startsWith("http") ? img.url : `${BACKEND_URL}${img.url}`;
+  if (img.imageUrl) return img.imageUrl.startsWith("http") ? img.imageUrl : `${BACKEND_URL}${img.imageUrl}`;
+  if (img.path) return img.path.startsWith("http") ? img.path : `${BACKEND_URL}${img.path}`;
+  if (img.img) return img.img.startsWith("http") ? img.img : `${BACKEND_URL}${img.img}`;
+  return "";
+};
+
+
   const [projects, setProjects] = useState([]);
   const [activeProjectId, setActiveProjectId] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -104,9 +115,10 @@ export default function ProjectsScreen() {
           >
             <View className="flex-row mb-2">
               <Image
-                source={{ uri: `${BACKEND_URL}${project.sourceImg}` }}
-                className="w-20 h-20 rounded-md mr-3"
-              />
+  source={{ uri: getImageUri(project.sourceImg) }}
+  className="w-20 h-20 rounded-md mr-3"
+/>
+
               <View className="flex-1">
                 <Text numberOfLines={2} className="text-base font-medium text-black mb-1">
                   {project.title}
